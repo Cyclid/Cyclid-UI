@@ -4,12 +4,16 @@ begin
   require 'bundler/setup'
 end
 
-task :rackup do
+task :rackup => :memcached do
   system 'rackup'
 end
 
-task :guard do
+task :guard => :memcached do
   system 'guard'
+end
+
+task :memcached do
+  system 'memcached -d'
 end
 
 task :default do

@@ -1,5 +1,7 @@
 require 'require_all'
 
+require_rel 'app/memcacher'
+
 require_all 'app/controllers'
 
 module Cyclid
@@ -14,6 +16,11 @@ module Cyclid
 
       use Rack::Deflater
       use Rack::Session::Cookie
+      use Rack::Csrf, raise: true,
+                      skip: ['POST:/login']
+
+      register Sinatra::Memcacher
+      set :memcacher_enabled, true
 
       use Controllers::Auth
       use Controllers::Organization

@@ -11,9 +11,11 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency('require_all', '~> 1.3')
   s.add_runtime_dependency('sinatra', '~> 1.4')
   s.add_runtime_dependency('sinatra-contrib', '~> 1.4')
+  s.add_runtime_dependency('rack_csrf', '~> 2.5')
   s.add_runtime_dependency('warden', '~> 1.2')
   s.add_runtime_dependency('activerecord', '~> 4.2')
   s.add_runtime_dependency('sinatra-activerecord', '~> 2.0')
   s.add_runtime_dependency('mustache', '~> 1.0')
   s.add_runtime_dependency('mustache-sinatra', '~> 1.0')
+  s.add_runtime_dependency('memcached', '~> 1.8')
 end

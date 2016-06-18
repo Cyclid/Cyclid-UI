@@ -4,6 +4,8 @@
 #
 # Authors: Kristian Van Der Vliet <vanders@liqwyd.com>
 require 'sinatra'
+require 'rack/csrf'
+
 require File.dirname(__FILE__) + '/app'
 
 configure :production do
