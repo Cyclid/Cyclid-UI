@@ -17,7 +17,7 @@ module Cyclid
           namespace: Cyclid::UI
         }
 
-        helpers Sinatra::Cookies
+        helpers Sinatra::Cookies, AuthHelpers
       end
     end
   end

@@ -4,9 +4,6 @@ module Cyclid
   module UI
     module Controllers
       class Auth < Base
-        register Sinatra::Memcacher
-        set :memcacher_enabled, true
-
         get '/login' do
           mustache :login, locals: env
         end
@@ -26,11 +23,15 @@ module Cyclid
           STDERR.puts token_data
 
           # At this point the user has autenticated successfully; get the user
-          # information from the API and cache it.
-          user_data = cache username do
-                        user_get(username)
-                      end
+          # information; the User model will cache it automatically.
+          # XXX We need someway to do this with an authenticated API request;
+          # either HTTP Basic (as we have the username & password in this
+          # method) or the JWT.
+          user_data = User.get(username: username).to_hash
           STDERR.puts user_data
+
+          # Store the username in the session
+          session[:username] = username
 
           # Return the JWT cookie to the client as a cookie
           response.set_cookie('cyclid.token',
@@ -47,34 +48,7 @@ module Cyclid
           mustache :login_success
         end
 
-        private
-
-        # XXX Testing; this is obviously something we should use Tilapia to do
-        def token_get(username, password, csrf_token)
-          token_data = nil
-          api = URI('http://localhost:9393/token')
-          Net::HTTP.start(api.host, api.port) do |http|
-            request = Net::HTTP::Post.new api
-            request.basic_auth(username, password)
-            request.body = {csrf: csrf_token}.to_json
-
-            response = http.request(request)
-            token_data = JSON.parse(response.body)
-          end
-          token_data
-        end
-
-        def user_get(username)
-          user_data = nil
-          api = URI("http://localhost:9393/user/#{username}")
-          Net::HTTP.start(api.host, api.port) do |http|
-            request = Net::HTTP::Get.new api
-
-            response = http.request(request)
-            user_data = JSON.parse(response.body)
-          end
-          user_data
-        end
+        helpers Helpers
       end
     end
   end

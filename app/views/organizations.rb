@@ -1,5 +1,5 @@
 class Organizations < Mustache
   def organizations
-    %w(admins example liqwyd cyclid)
+    @current_user['organizations']
   end
 end
