@@ -1,5 +1,6 @@
 require 'sinatra/base'
 require 'sinatra/cookies'
+require 'sinatra/flash'
 require 'mustache'
 require 'mustache/sinatra'
 
@@ -16,6 +17,8 @@ module Cyclid
 
           namespace: Cyclid::UI
         }
+
+        register Sinatra::Flash
 
         helpers Sinatra::Cookies, AuthHelpers
       end

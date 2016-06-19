@@ -5,6 +5,7 @@ module Cyclid
     module Controllers
       class Auth < Base
         get '/login' do
+          @message = flash[:login_error]
           mustache :login, layout: false
         end
 
@@ -18,8 +19,13 @@ module Cyclid
           # Use the username & password to authenticate against the API; if
           # successful, it will return a JWT that can be used to authenticate
           # future requests
-          token_data = token_get(username, password, csrf_token)
-          STDERR.puts token_data
+          begin
+            token_data = token_get(username, password, csrf_token)
+            STDERR.puts token_data
+          rescue
+            flash[:login_error] = 'Invalid username or password'
+            halt 401, flash.now[:login_error]
+          end
 
           # At this point the user has autenticated successfully; get the user
           # information; the User model will cache it automatically.

@@ -1,6 +1,7 @@
 require 'require_all'
 require 'warden'
 require 'memcached'
+require 'sinatra/flash'
 
 require_rel 'app/memcache'
 require_rel 'app/helpers'
@@ -28,6 +29,8 @@ module Cyclid
 
       helpers Helpers
 
+      register Sinatra::Flash
+
       # Configure Warden to authenticate
       use Warden::Manager do |config|
         config.serialize_into_session(&:username)
@@ -51,7 +54,7 @@ module Cyclid
           username = session[:username]
           user = User.get(username: username)
 
-          user.nil?? fail!('invalid user') : success!(user)
+          user.nil? ? fail!('invalid user') : success!(user)
         end
       end
 
