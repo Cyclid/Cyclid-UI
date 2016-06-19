@@ -5,7 +5,9 @@ module Cyclid
         get '/organizations' do
           authenticate!
 
-          mustache :organizations, locals: current_user
+          @current_user = current_user
+
+          mustache :organizations
         end
       end
     end

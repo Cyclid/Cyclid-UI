@@ -5,13 +5,12 @@ module Cyclid
     module Controllers
       class Auth < Base
         get '/login' do
-          mustache :login, locals: env
+          mustache :login, layout: false
         end
 
         post '/login' do
           username = params[:username]
           password = params[:password]
-          STDERR.puts "#{username} logged in with password #{password}"
 
           # Get the CSRF token from Rack; it'll be added to the JWT claims
           csrf_token = Rack::Csrf.csrf_token(env)
@@ -40,12 +39,25 @@ module Cyclid
                               path: '/',
                               http_only: false) # Must be available for AJAX
 
-          # XXX Hook into a Warden strategy
-
           # Return a "login success" page along with the JWT & CSRF as cookie
           # data, so that they can be stored; the page should then do redirect
           # to the main page
-          mustache :login_success
+          mustache :login_success, layout: false
+        end
+
+        # Log out:
+        #
+        # 1. Delete the cached user object from Memcached
+        # 2. Clear the session data
+        # 3. Delete the API token cookie
+        get '/logout' do
+          memcache = Memcache.new(server: 'localhost:11211')
+          memcache.expire(current_user.username)
+
+          warden.logout
+          cookies.delete 'cyclid.token'
+
+          redirect to '/login'
         end
 
         helpers Helpers

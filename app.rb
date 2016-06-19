@@ -8,6 +8,8 @@ require_rel 'app/helpers'
 require_all 'app/models'
 require_all 'app/controllers'
 
+require_rel 'app/views/layout'
+
 module Cyclid
   module UI
     class App < Sinatra::Application
