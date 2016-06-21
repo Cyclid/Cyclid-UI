@@ -17,26 +17,40 @@ module Cyclid
           'id' => @id }
       end
 
-      # XXX Test method; should check Memcached & fallback to the API
+      # Try to find the user object in Memcached; if it does not exist,
+      # fallback to the API. If the API returns the user data, it will be
+      # cached into Memcache for future use.
+      #
+      # If we have to fall back to the API we currently assume that the HTTP
+      # Basic username & password are available and valid.
       def self.get(args)
         username = args[:username] || args['username']
         memcache = Memcache.new(server: 'localhost:11211') 
 
         user_data = memcache.cache username do
-                      user_get(username)
+                      user_get(args)
                     end
         self.new(user_data)
       end
 
-      def self.user_get(username)
-        user_data = nil
-        api = URI("http://localhost:9393/user/#{username}")
-        Net::HTTP.start(api.host, api.port) do |http|
-          request = Net::HTTP::Get.new api
+      def self.user_get(args)
+        username = args[:username] || args['username']
+        password = args[:password] || args['password']
 
-          response = http.request(request)
-          user_data = JSON.parse(response.body)
+        user_data = nil
+        begin
+          client = Client::Tilapia.new(auth: Client::AUTH_BASIC,
+                                       server: 'localhost',
+                                       port: 8092,
+                                       username: username,
+                                       password: password)
+          user_data = client.user_get(username)
+          STDERR.puts "got #{user_data}"
+        rescue Exception => ex
+          STDERR.puts "failed to get user details: #{ex}"
+          raise ex
         end
+
         user_data
       end
     end

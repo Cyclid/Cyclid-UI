@@ -1,4 +1,5 @@
 require 'json'
+require 'cyclid/client'
 
 module Cyclid
   module UI
@@ -20,9 +21,16 @@ module Cyclid
           # successful, it will return a JWT that can be used to authenticate
           # future requests
           begin
-            token_data = token_get(username, password, csrf_token)
-            STDERR.puts token_data
-          rescue
+            client = Client::Tilapia.new(auth: Client::AUTH_BASIC,
+                                         log_level: Logger::DEBUG,
+                                         server: 'localhost',
+                                         port: 8092,
+                                         username: username,
+                                         password: password)
+            token_data = client.token_get(username)
+            STDERR.puts "got #{token_data}"
+          rescue Exception => ex
+            STDERR.puts "failed to get a token: #{ex}"
             flash[:login_error] = 'Invalid username or password'
             halt 401, flash.now[:login_error]
           end
@@ -32,7 +40,7 @@ module Cyclid
           # XXX We need someway to do this with an authenticated API request;
           # either HTTP Basic (as we have the username & password in this
           # method) or the JWT.
-          user_data = User.get(username: username).to_hash
+          user_data = User.get(username: username, password: password).to_hash
           STDERR.puts user_data
 
           # Store the username in the session
