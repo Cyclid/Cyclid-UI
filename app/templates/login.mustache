@@ -1,6 +1,71 @@
-{{#message}}{{message}}{{/message}}
-<form action="{{action}}">
-  Username: <input type="text" name="username"><br>
-  Password: <input type="text" name="password"><br>
-  <input type="submit" formmethod="post" value="Login">
-</form>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+      {{title}}
+    </title>
+
+    <!-- Bootstrap CSS -->
+    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/vendor/bootstrap/css/custom.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    <div id="wrap">
+      <nav class="navbar navbar-layout">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <a class="navbar-brand" href="/login">Cyclid</a>
+          </div>
+        </div>
+      </nav>
+
+      <div class="container">
+        <div class="row">
+          <img class="center-block" src="images/cyclid-logo-large.png">
+        </div>
+      </div>
+
+      <div id="push"></div>
+
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4 col-md-offset-4">
+            <form action="{{action}}" method="post">
+              <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" name="username" placeholder="Username">
+              </div>
+              <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" name="password" placeholder="Password">
+              </div>
+              <input type="submit" class="btn btn-default" value="Login">
+            </form>
+          </div>
+        </div>
+
+        <div class="row v-offset-10">
+          <div class="col-md-4 col-md-offset-4">
+            {{#message}}
+              <div class="alert alert-warning" role="alert">{{message}}</div>
+            {{/message}}
+          </div>
+        </div>
+      </div>
+
+      <div id="push"></div>
+
+    </div><!-- #wrap -->
+
+    {{> footer}}
+
+    <!-- jQuery -->
+    <script src="/vendor/jquery-2.2.4.min.js"></script>
+    <!-- Bootstrap plugins -->
+    <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+  </body>
+</html>

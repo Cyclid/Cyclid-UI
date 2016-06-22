@@ -4,6 +4,10 @@ class Layout < Mustache
     @current_user.username || 'Nobody'
   end
 
+  def organizations
+    @current_user.organizations
+  end
+
   def title
     @title || 'Cyclid'
   end
