@@ -20,7 +20,7 @@ module Cyclid
 
         register Sinatra::Flash
 
-        helpers Sinatra::Cookies, AuthHelpers
+        helpers Sinatra::Cookies, Helpers, AuthHelpers
       end
     end
   end

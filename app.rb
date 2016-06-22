@@ -52,7 +52,10 @@ module Cyclid
 
         def authenticate!
           username = session[:username]
-          user = User.get(username: username)
+          # There are no Helpers in Wardentown
+          token = request.cookies['cyclid.token']
+
+          user = User.get(username: username, token: token)
 
           user.nil? ? fail!('invalid user') : success!(user)
         end
@@ -66,6 +69,7 @@ module Cyclid
         # Stop Warden from calling this endpoint again in an endless loop when
         # it sees the 401 response
         env['warden'].custom_failure!
+        flash[:login_error] = 'Invalid username or password'
         redirect to '/login'
       end
 

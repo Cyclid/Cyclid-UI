@@ -14,9 +14,6 @@ module Cyclid
           username = params[:username]
           password = params[:password]
 
-          # Get the CSRF token from Rack; it'll be added to the JWT claims
-          csrf_token = Rack::Csrf.csrf_token(env)
-
           # Use the username & password to authenticate against the API; if
           # successful, it will return a JWT that can be used to authenticate
           # future requests
@@ -31,8 +28,7 @@ module Cyclid
             STDERR.puts "got #{token_data}"
           rescue Exception => ex
             STDERR.puts "failed to get a token: #{ex}"
-            flash[:login_error] = 'Invalid username or password'
-            halt 401, flash.now[:login_error]
+            halt_with_401
           end
 
           # At this point the user has autenticated successfully; get the user
@@ -65,6 +61,8 @@ module Cyclid
         # 2. Clear the session data
         # 3. Delete the API token cookie
         get '/logout' do
+          authenticate!
+
           memcache = Memcache.new(server: 'localhost:11211')
           memcache.expire(current_user.username)
 
@@ -73,8 +71,6 @@ module Cyclid
 
           redirect to '/login'
         end
-
-        helpers Helpers
       end
     end
   end
