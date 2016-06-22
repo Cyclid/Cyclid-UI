@@ -35,7 +35,9 @@ module Cyclid
       use Warden::Manager do |config|
         config.serialize_into_session(&:username)
         config.serialize_from_session do |username|
-          User.get(username: username)
+          # Animal skins & flint knives...
+          token = env['rack.request.cookie_hash']['cyclid.token']
+          User.get(username: username, token: token)
         end
 
         config.scope_defaults :default,
