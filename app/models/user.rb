@@ -31,6 +31,7 @@ module Cyclid
         user_data = memcache.cache username do
                       user_fetch(args)
                     end
+
         self.new(user_data)
       end
 

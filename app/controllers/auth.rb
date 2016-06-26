@@ -36,8 +36,8 @@ module Cyclid
           # XXX We need someway to do this with an authenticated API request;
           # either HTTP Basic (as we have the username & password in this
           # method) or the JWT.
-          user_data = User.get(username: username, password: password).to_hash
-          STDERR.puts user_data
+          user = User.get(username: username, password: password)
+          STDERR.puts user.to_hash
 
           # Store the username in the session
           session[:username] = username
@@ -49,10 +49,12 @@ module Cyclid
                               path: '/',
                               http_only: false) # Must be available for AJAX
 
-          # Return a "login success" page along with the JWT & CSRF as cookie
-          # data, so that they can be stored; the page should then do redirect
-          # to the main page
-          mustache :login_success, layout: false
+          # Pick the first organization from the users membership and redirect
+          initial_org = user.organizations.first
+
+          # XXX If the user does not belong to any organizations, direct to
+          # their user page (once there is one)
+          redirect to initial_org
         end
 
         # Log out:

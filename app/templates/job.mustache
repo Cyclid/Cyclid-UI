@@ -1,0 +1,134 @@
+<div class="container" id="job">
+
+  <div class="alert alert-danger hidden" role="alert" id="job_failure"></div>
+
+  <div class="container hidden" id="job_details">
+    <div class="row">
+      <div class="col-md-12" id="job_header"></div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-4">
+        <table class="table">
+          <tr><td><strong>Job</strong></td><td id="job_id"></td></tr>
+          <tr><td><strong>Started</strong></td><td id="job_started"></td></tr>
+          <tr><td><strong>Ended</strong></td><td id="job_ended"></td></tr>
+        </table>
+      </div>
+
+      <div class="col-md-4">
+        <table class="table">
+        </table>
+      </div>
+
+      <div class="col-md-4">
+        <table class="table">
+          <tr><td><h3><strong>Status</strong></h3></td><td id="job_status"></td></tr>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="job_log" class="hidden"></div>
+
+  <script type="text/javascript">
+    // Perform an authenticated GET to the API server.
+    function api_get(url, username, success, error) {
+      $.ajax({
+        url: url,
+        dataType: 'json',
+        crossDomain: true,
+        beforeSend: function(xhr) {
+          var token = Cookies.get('cyclid.token');
+          var authorization = `Token ${username}:${token}`
+          xhr.setRequestHeader('Authorization', authorization);
+        },
+        success: success,
+        error: error
+      });
+    }
+
+    // Convert a Cyclid job status code to a human readable status
+    function job_status_to_human(status_id) {
+      var statuses = {1: 'New',
+                      2: 'Waiting',
+                      3: 'Started',
+                      4: 'Failing',
+                      10: 'Succeeded',
+                      11: 'Failed'};
+      var status = statuses[status_id];
+
+      var glyphs = {1: 'glyphicon-share-alt',
+                    2: 'glyphicon-time',
+                    3: 'glyphicon-refresh',
+                    4: 'glyphicon-alert',
+                    10: 'glyphicon-ok',
+                    11: 'glyphicon-remove'};
+      var glyph = glyphs[status_id];
+
+      var labels = {1: 'label-primary',
+                    2: 'label-primary',
+                    3: 'label-info',
+                    4: 'label-warning',
+                    10: 'label-success',
+                    11: 'label-danger'};
+      var label = labels[status_id];
+
+      return `<h3>
+                <span class="label ${label}">
+                  <span class="glyphicon ${glyph}" aria-hidden="true"></span>&nbsp;${status}
+                </span>
+              </h3>`
+    }
+
+    // Set & show the job log element
+    function update_job_log(log_text) {
+      var log = `<pre class="pre-scrollable">${log_text}</pre>`
+      $('#job_log').html(log);
+
+      $('#job_log').removeClass('hidden');
+    }
+
+    // Set & show the job details
+    function update_job(job) {
+      // Using ECMAScript 6 features here: this will only work in newer browsers.
+      var strap = `<h1>${job.job_name}&nbsp;<small>v${job.job_version}</small></h1>`;
+      $('#job_header').html(strap);
+
+      $('#job_id').text(job.id);
+
+      var status = job_status_to_human(job.status)
+      $('#job_status').html(status);
+
+      if (job.started) {
+        var started = new Date(job.started);
+        $('#job_started').text(started.toUTCString());
+      }
+
+      if (job.ended) {
+        var ended = new Date(job.ended);
+        $('#job_ended').text(ended.toUTCString());
+      }
+
+      $('#job_details').removeClass('hidden');
+
+      update_job_log(job.log);
+    }
+
+    function job_get_failed(xhr) {
+      var failure_message = `<p>
+                               <h2>Failed to retrieve job</h2><br>
+                               <strong>${xhr.status}:</strong> ${xhr.responseText}
+                             </p>`
+      $('#job_failure').html(failure_message);
+
+      $('#job_failure').removeClass('hidden');
+    }
+
+    // Retrieve the job data from the API & call either the success or failure handlers
+    var url = '{{job_url}}';
+    api_get(url, '{{username}}', update_job, job_get_failed);
+  </script>
+
+</div>
