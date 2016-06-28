@@ -105,3 +105,62 @@ body {
 .v-offset-30 {
   margin-top: 30px;
 }
+
+/* padding adjustment */
+.pad-2 {
+  padding: 2px;
+}
+.pad-3 {
+  padding: 3px;
+}
+.pad-4 {
+  padding: 4px;
+}
+.pad-5 {
+  padding: 5px;
+}
+.pad-7 {
+  padding: 7px;
+}
+.pad-10 {
+  padding: 10px;
+}
+
+/* Remove the border from tables */
+.no-border>thead>tr>th,
+.no-border>tbody>tr>th,
+.no-border>tfoot>tr>th,
+.no-border>thead>tr>td,
+.no-border>tbody>tr>td,
+.no-border>tfoot>tr>td {
+  border-top: none;
+  padding: 5px;
+}
+
+.text-normal {
+  color: black;
+}
+
+.job-log {
+  background-color: black;
+  white-space: pre-wrap;
+  color: lightgray;
+  min-height: 150px;
+  max-height: 400px;
+}
+
+/* spinners */
+.glyphicon.spinning {
+    animation: spin 1s infinite linear;
+    -webkit-animation: spin2 1s infinite linear;
+}
+
+@keyframes spin {
+    from { transform: scale(1) rotate(0deg); }
+    to { transform: scale(1) rotate(360deg); }
+}
+
+@-webkit-keyframes spin2 {
+    from { -webkit-transform: rotate(0deg); }
+    to { -webkit-transform: rotate(360deg); }
+}

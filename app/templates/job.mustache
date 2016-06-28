@@ -2,31 +2,49 @@
 
   <div class="alert alert-danger hidden" role="alert" id="job_failure"></div>
 
-  <div class="container hidden" id="job_details">
-    <div class="row">
-      <div class="col-md-12" id="job_header"></div>
-    </div>
+  <div class="panel hidden" id="job_details">
+    <div class="container">
 
-    <div class="row">
-      <div class="col-md-4">
-        <table class="table">
-          <tr><td><strong>Job</strong></td><td id="job_id"></td></tr>
-          <tr><td><strong>Started</strong></td><td id="job_started"></td></tr>
-          <tr><td><strong>Ended</strong></td><td id="job_ended"></td></tr>
-        </table>
+      <div class="row">
+        <div class="col-md-12" id="job_header"></div>
       </div>
 
-      <div class="col-md-4">
-        <table class="table">
-        </table>
+      <div class="row">
+        <div class="col-md-4">
+          <table class="table no-border text-muted">
+            <tr><td>Job</td><td id="job_id"></td></tr>
+            <tr><td>Started</td><td id="job_started"></td></tr>
+            <tr><td>Ended</td><td id="job_ended"></td></tr>
+          </table>
+        </div>
+
+        <!-- currently unused -->
+        <div class="col-md-4">
+          <table class="table no-border text-muted">
+            <tr><td>Extra</td><td id="job_extra">Extra info</td></tr>
+            <tr><td>Appears</td><td id="job_appears">Over here</td></tr>
+          </table>
+        </div>
+
+        <!-- currently unused -->
+        <div class="col-md-4">
+          <table class="table no-border text-muted">
+          </table>
+        </div>
+
       </div>
 
-      <div class="col-md-4">
-        <table class="table">
-          <tr><td><h3><strong>Status</strong></h3></td><td id="job_status"></td></tr>
-        </table>
+      <div class="row">
+        <div class="col-md-1">
+          <h4 class="text-normal">Status</h4>
+        </div>
+        <div class="col-md-1">
+          <span id="job_status"></span>
+        </div>
+        <div id="job-waiting" class="col-md-3 pad-3 text-muted hidden">
+          <h6><span class="glyphicon glyphicon-cog spinning"></span>&nbsp;Waiting for job to finish...</h6>
+        </div>
       </div>
-
     </div>
   </div>
 
@@ -75,31 +93,50 @@
                     11: 'label-danger'};
       var label = labels[status_id];
 
-      return `<h3>
+      return `<h4>
                 <span class="label ${label}">
                   <span class="glyphicon ${glyph}" aria-hidden="true"></span>&nbsp;${status}
                 </span>
-              </h3>`
+              </h4>`
     }
 
     // Set & show the job log element
     function update_job_log(log_text) {
-      var log = `<pre class="pre-scrollable">${log_text}</pre>`
+      var log = `<pre class="pre-scrollable job-log">${log_text}</pre>`
       $('#job_log').html(log);
 
       $('#job_log').removeClass('hidden');
     }
 
+    // Is the job in a "Failed" or "Succeeded" state?
+    function job_finished() {
+      if( last_status == 10 || last_status == 11 ) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+
+    function update_job_status(status_id) {
+      var status = job_status_to_human(status_id)
+      $('#job_status').html(status);
+
+      last_status = status_id;
+
+      if ( job_finished() ) {
+        $('#job-waiting').addClass('hidden');
+      } else {
+        $('#job-waiting').removeClass('hidden');
+      }
+    }
+
     // Set & show the job details
-    function update_job(job) {
+    function update_job_details(job) {
       // Using ECMAScript 6 features here: this will only work in newer browsers.
       var strap = `<h1>${job.job_name}&nbsp;<small>v${job.job_version}</small></h1>`;
       $('#job_header').html(strap);
 
       $('#job_id').text(job.id);
-
-      var status = job_status_to_human(job.status)
-      $('#job_status').html(status);
 
       if (job.started) {
         var started = new Date(job.started);
@@ -112,7 +149,11 @@
       }
 
       $('#job_details').removeClass('hidden');
+    }
 
+    function update_job(job) {
+      update_job_details(job);
+      update_job_status(job.status);
       update_job_log(job.log);
     }
 
@@ -126,9 +167,51 @@
       $('#job_failure').removeClass('hidden');
     }
 
+    function update_job_status_and_check_completion(status_id) {
+      if( status_id != last_status ) {
+        update_job_status(status_id);
+      }
+
+      // Did the job end?
+      if( job_finished() ){
+        // Update the job details so that E.g. the "Ended" time is shown
+        api_get(url, '{{username}}', update_job_details, job_get_failed);
+      }
+    }
+
+    function watch_job(url) {
+      if( job_finished() ){
+        console.log(`last_status is ${last_status}: nothing to do here`);
+      } else {
+        console.log(`last_status=${last_status}`);
+
+        // Check job status
+        var status_url = `${url}/status`;
+        api_get(status_url,
+                '{{username}}',
+                function(data) {
+                  update_job_status_and_check_completion(data.status);
+                },
+                job_get_failed);
+
+        // Update log
+        var log_url = `${url}/log`;
+        api_get(log_url, '{{username}}', function(data) { update_job_log(data.log); }, job_get_failed);
+
+        // Check again...
+        setTimeout(function() { watch_job(url); }, 3000);
+      }
+    }
+
     // Retrieve the job data from the API & call either the success or failure handlers
+    var last_status = 0;
     var url = '{{job_url}}';
+
+    // Inital get & display the job details, status & log
     api_get(url, '{{username}}', update_job, job_get_failed);
+
+    // Watch the job for status updates
+    setTimeout(function() { watch_job(url); }, 3000);
   </script>
 
 </div>
