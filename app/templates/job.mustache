@@ -42,13 +42,15 @@
           <span id="job_status"></span>
         </div>
         <div id="job-waiting" class="col-md-3 pad-3 text-muted hidden">
-          <h6><span class="glyphicon glyphicon-cog spinning"></span>&nbsp;Waiting for job to finish...</h6>
+          <h6><i class="fa fa-cog fa-spin"></i>&nbsp;Waiting for job to finish...</h6>
         </div>
       </div>
     </div>
   </div>
 
-  <div id="job_log" class="hidden"></div>
+  <div id="job_log_outer" class="hidden">
+    <pre id="job_log_inner" class="pre-scrollable job-log"></pre>
+  </div>
 
   <script type="text/javascript">
     // Perform an authenticated GET to the API server.
@@ -102,10 +104,20 @@
 
     // Set & show the job log element
     function update_job_log(log_text) {
-      var log = `<pre class="pre-scrollable job-log">${log_text}</pre>`
-      $('#job_log').html(log);
+      // Show the log
+      var outer = $('#job_log_outer');
+      outer.removeClass('hidden');
 
-      $('#job_log').removeClass('hidden');
+      // Find the current position of the scrollable element, before we update it
+      var inner = $('#job_log_inner')
+      var diff = inner.prop('scrollHeight') - (inner.scrollTop() + inner.outerHeight());
+
+      // Update the log
+      inner.html(log_text);
+
+      // If the user hasn't scrolled up, scroll to the bottom to show the new log data
+      if( diff <= 0 )
+        inner.scrollTop(inner.prop('scrollHeight'));
     }
 
     // Is the job in a "Failed" or "Succeeded" state?
@@ -123,16 +135,30 @@
 
       last_status = status_id;
 
-      if ( job_finished() ) {
-        $('#job-waiting').addClass('hidden');
-      } else {
-        $('#job-waiting').removeClass('hidden');
+      // Update the "Waiting" message appropriately
+      var waiting = '<h6>Unknown</h6>';
+      switch(last_status) {
+        case 1:
+        case 2:
+          waiting = '<h6><i class="fa fa-spinner fa-pulse"></i>&nbsp;Waiting for job to start...</h6>'
+          $('#job-waiting').html(waiting);
+          $('#job-waiting').removeClass('hidden');
+          break;
+        case 3:
+        case 4:
+          waiting = '<h6><i class="fa fa-cog fa-spin"></i>&nbsp;Waiting for job to complete...</h6>';
+          $('#job-waiting').html(waiting);
+          $('#job-waiting').removeClass('hidden');
+          break;
+        case 10:
+        case 11:
+          $('#job-waiting').addClass('hidden');
+          break;
       }
     }
 
     // Set & show the job details
     function update_job_details(job) {
-      // Using ECMAScript 6 features here: this will only work in newer browsers.
       var strap = `<h1>${job.job_name}&nbsp;<small>v${job.job_version}</small></h1>`;
       $('#job_header').html(strap);
 
@@ -151,6 +177,7 @@
       $('#job_details').removeClass('hidden');
     }
 
+    // Update everything: job details, status & log
     function update_job(job) {
       update_job_details(job);
       update_job_status(job.status);
