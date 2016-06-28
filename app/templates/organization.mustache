@@ -1,9 +1,59 @@
-<b>{{name}}</b>: {{owner}}<br>
-<h1>Users</h1>
-<ol>
-  {{#users}}
-    <li>{{.}}</li>
-  {{/users}}
-</ol>
-<h1>Public Key</h1>
-{{public_key}}
+<div class="container" id="organizations">
+
+  <div class="alert alert-danger hidden" role="alert" id="organization_failure"></div>
+
+  <div class="panel-group" id="jobs-accordian">
+  </div>
+
+  <div id="job-info" class="hidden">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          <a data-toggle="collapse" data-parent="#jobs-accordian" id="toggleID" href="#collapseID">
+          Job ID</a>
+        </h4>
+      </div>
+      <div id="collapseID" class="panel-collapse collapse">
+      </div>
+    </div>
+  </div>
+
+  <div class="hidden">
+    <div id="job-info-inner" class="panel-body">
+      {{> job_info}}
+    </div>
+  </div>
+
+  <script type="text/javascript">
+    function add_job(id) {
+      var accordian = $('#jobs-accordian');
+      var job_info = $('#job-info');
+
+      accordian.append(job_info.html().replace(/ID/g, id));
+    }
+
+    function show_job() {
+      var job_id = $(this).data('job_id');
+      var job_info_inner = $('#job-info-inner');
+
+      $(`#collapse${job_id}`).html(job_info_inner);
+
+      var url = `{{organization_url}}/jobs/${job_id}`;
+      api_get(url, '{{username}}', update_job, job_get_failed);
+    }
+
+    function hide_job() {
+      var job_id = $(this).data('job_id');
+      $(`#collapse${job_id}.job-info-inner`).remove();
+    }
+
+    for(var i=140; i > 100; i--){
+      add_job(i);
+
+      var collapse = $(`#collapse${i}`);
+      collapse.data('job_id', i);
+      collapse.on('hidden.bs.collapse', hide_job);
+      collapse.on('show.bs.collapse', show_job);
+    }
+  </script>
+</div>

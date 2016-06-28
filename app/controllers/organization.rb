@@ -11,14 +11,8 @@ module Cyclid
           @crumbs = []
           @crumbs << {'name' => name.capitalize}
 
-          # Get the organization data from the API
-          begin
-            @org = client.org_get(params[:name])
-          rescue Exception => ex
-            STDERR.puts "something went wrong: #{ex}"
-            halt 500, 'i have fallen and i can not get up'
-          end
-
+          api_server = 'http://localhost:8092'
+          @organization_url = "#{api_server}/organizations/#{params[:name]}"
           @current_user = current_user
 
           mustache :organization
