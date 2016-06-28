@@ -5,6 +5,12 @@ module Cyclid
         get '/:name' do
           authenticate!
 
+          # Build breadcrumbs
+          name = params[:name]
+
+          @crumbs = []
+          @crumbs << {'name' => name.capitalize}
+
           # Get the organization data from the API
           begin
             @org = client.org_get(params[:name])
@@ -20,6 +26,14 @@ module Cyclid
 
         get '/:name/job/:id' do
           authenticate!
+
+          # Build breadcrumbs
+          name = params[:name]
+          id = params[:id]
+
+          @crumbs = []
+          @crumbs << {'url' => "/#{name}", 'name' => name.capitalize}
+          @crumbs << {'name' => "Job ##{id}"}
 
           api_server = 'http://localhost:8092'
           @job_url = "#{api_server}/organizations/#{params[:name]}/jobs/#{params[:id]}"

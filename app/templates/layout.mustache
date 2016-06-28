@@ -50,6 +50,28 @@
         </div>
       </nav>
 
+      {{#breadcrumbs}}
+      <ol id="nav-breadcrumbs" class="breadcrumb breadcrumb-layout">
+      </ol>
+
+      <script type="text/javascript">
+        function lay_crumbs(crumbs) {
+          var crumbsLength = crumbs.length;
+          for (var i = 0; i < crumbsLength; i++) {
+            var name = crumbs[i].name;
+            if (i + 1 == crumbsLength) {
+              $('#nav-breadcrumbs').append(`<li class="active">${name}</a></li>`);
+            } else {
+              var url = crumbs[i].url;
+              $('#nav-breadcrumbs').append(`<li><a href="${url}"}>${name}</a></li>`);
+            }
+          }
+        }
+
+        lay_crumbs({{{breadcrumbs}}});
+      </script>
+      {{/breadcrumbs}}
+
       <div id="content">
         {{{yield}}}
       </div>

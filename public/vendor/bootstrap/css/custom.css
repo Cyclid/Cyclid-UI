@@ -1,8 +1,8 @@
 /* navbar */
-.navbar-layout,
 .navbar-layout {
   border-radius: 0px;
   background-color: #3c3c3b;
+  margin: 0px;
 }
 
 /* navbar "brand" */
@@ -47,6 +47,19 @@
 .navbar-layout .navbar-text {
   /*color: #f59d15;*/
   color: #8f8f8f;
+}
+
+.breadcrumb-layout {
+  border-radius: 0px;
+  background-color: #6f6f6e;
+}
+
+.breadcrumb-layout li>a {
+  color: #f59d15;
+}
+
+.breadcrumb-layout li.active {
+  color: black;
 }
 
 /* sticky footer */

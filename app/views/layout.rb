@@ -11,5 +11,10 @@ class Layout < Mustache
   def title
     @title || 'Cyclid'
   end
+
+  # Return an array of elements to be inserted into the breadcrumb
+  def breadcrumbs
+    @crumbs.to_json
+  end
 end
 end; end; end
