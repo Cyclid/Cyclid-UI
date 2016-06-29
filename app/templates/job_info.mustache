@@ -1,49 +1,37 @@
 <div class="alert alert-danger hidden" role="alert" id="job_failure"></div>
 
-<div class="panel hidden" id="job_details">
-  <div class="container">
+<div class="panel panel-default hidden" id="job_details">
+  <div class="panel-heading">
+    <h3 class="panel-title"><span id="job_header"></span></h3>
+  </div>
 
-    <div class="row">
-      <div class="col-md-12" id="job_header"></div>
+  <div class="row">
+    <!-- standard job attributes -->
+    <div class="col-md-8">
+      <div class="col-md-6">
+        <div class="dl-horizontal text-muted">
+          <dt>Job</dt><dd id="job_id"></dd>
+          <dt>Started</dt><dd id="job_started"></dd>
+          <dt>Ended</dt><dd id="job_ended"></dd>
+        </div>
+      </div>
+
+      <!-- additional job attributes -->
+      <div class="col-md-6">
+        <div class="dl-horizontal text-muted">
+          <dt>Extra</dt><dd id="job_extra">Extra info</dd>
+          <dt>Appears</dt><dd id="job_appears">Over here</dd>
+        </div>
+      </div>
     </div>
 
-    <div class="row">
-      <div class="col-md-4">
-        <table class="table no-border text-muted">
-          <tr><td>Job</td><td id="job_id"></td></tr>
-          <tr><td>Started</td><td id="job_started"></td></tr>
-          <tr><td>Ended</td><td id="job_ended"></td></tr>
-        </table>
-      </div>
-
-      <!-- currently unused -->
-      <div class="col-md-4">
-        <table class="table no-border text-muted">
-          <tr><td>Extra</td><td id="job_extra">Extra info</td></tr>
-          <tr><td>Appears</td><td id="job_appears">Over here</td></tr>
-        </table>
-      </div>
-
-      <!-- currently unused -->
-      <div class="col-md-4">
-        <table class="table no-border text-muted">
-        </table>
-      </div>
-
-    </div>
-
-    <div class="row">
-      <div class="col-md-1">
-        <h4 class="text-normal">Status</h4>
-      </div>
-      <div class="col-md-1">
-        <span id="job_status"></span>
-      </div>
-      <div id="job-waiting" class="col-md-3 pad-3 text-muted hidden">
-        <h6><i class="fa fa-cog fa-spin"></i>&nbsp;Waiting for job to finish...</h6>
-      </div>
+    <!-- status -->
+    <div class="col-md-3 pull-right">
+      <h4><span id="job_status"></span></h4>
+      <span id="job-waiting"></span>
     </div>
   </div>
+
 </div>
 
 <div id="job_log_outer" class="hidden">
@@ -93,11 +81,9 @@
                   11: 'label-danger'};
     var label = labels[status_id];
 
-    return `<h4>
-              <span class="label ${label}">
-                <span class="glyphicon ${glyph}" aria-hidden="true"></span>&nbsp;${status}
-              </span>
-            </h4>`
+    return `<span class="label ${label}">
+              <span class="glyphicon ${glyph}" aria-hidden="true"></span>&nbsp;${status}
+            </span>`
   }
 
   // Set & show the job log element
@@ -157,7 +143,7 @@
 
   // Set & show the job details
   function update_job_details(job) {
-    var strap = `<h1>${job.job_name}&nbsp;<small>v${job.job_version}</small></h1>`;
+    var strap = `${job.job_name}&nbsp;<small>v${job.job_version}</small>`;
     $('#job_header').html(strap);
 
     $('#job_id').text(job.id);

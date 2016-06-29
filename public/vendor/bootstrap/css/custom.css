@@ -139,6 +139,15 @@ body {
   padding: 10px;
 }
 
+/* Why does dl-horizontal want so much space? */
+.dl-horizontal dt {
+  width: 100px;
+}
+
+.dl-horizontal dd {
+    margin-left: 120px;
+}
+
 /* Remove the border from tables */
 .no-border>thead>tr>th,
 .no-border>tbody>tr>th,
@@ -148,6 +157,24 @@ body {
 .no-border>tfoot>tr>td {
   border-top: none;
   padding: 5px;
+}
+
+.no-margin-bottom {
+  margin-bottom: 0px !important;
+}
+
+.no-margin-top {
+  margin-top: 0px !important;
+}
+
+.hidden-row {
+  padding: 0px !important;
+  border: 0px !important;
+  background-color: lightgray;
+}
+
+.job-table {
+  background-color: white;
 }
 
 .text-normal {

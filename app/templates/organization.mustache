@@ -1,22 +1,33 @@
-<div class="container" id="organizations">
+<!--<div class="container" id="organizations">-->
 
   <div class="alert alert-danger hidden" role="alert" id="organization_failure"></div>
 
-  <div class="panel-group" id="jobs-accordian">
-  </div>
+  <table class="sortable table table-hover table-condensed job-table" id="job-accordian">
+    <thead>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Started</th>
+      <th>Status</th>
+    </thead>
 
-  <div id="job-info" class="hidden">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h4 class="panel-title">
-          <a data-toggle="collapse" data-parent="#jobs-accordian" id="toggleID" href="#collapseID">
-          Job ID</a>
-        </h4>
-      </div>
-      <div id="collapseID" class="panel-collapse collapse">
-      </div>
-    </div>
-  </div>
+    <tbody></tbody>
+  </table>
+
+  <table id="job-info" class="hidden">
+    <tr data-toggle="collapse" data-target="#collapseID" class="clickable">
+      <td>ID</td>
+      <td>Name</td>
+      <td>Started</td>
+      <td>Status</td>
+    </tr>
+
+    <tr>
+      <td colspan="4" class="hidden-row">
+        <div id="collapseID" class="collapse">
+        </div>
+      </td>
+    </tr>
+  </table>
 
   <div class="hidden">
     <div id="job-info-inner" class="panel-body">
@@ -26,8 +37,9 @@
 
   <script type="text/javascript">
     function add_job(id) {
-      var accordian = $('#jobs-accordian');
-      var job_info = $('#job-info');
+      var accordian = $('#job-accordian tbody');
+      // Replace all of this with Mustache.js templates
+      var job_info = $('#job-info tbody');
 
       accordian.append(job_info.html().replace(/ID/g, id));
     }
@@ -56,4 +68,4 @@
       collapse.on('show.bs.collapse', show_job);
     }
   </script>
-</div>
+<!--</div>-->
