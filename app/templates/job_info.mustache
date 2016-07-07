@@ -35,26 +35,11 @@
 </div>
 
 <div id="job_log_outer" class="hidden">
-  <pre id="job_log_inner" class="pre-scrollable job-log"></pre>
+  <pre id="job_log_inner" class="pre-scrollable job-log small"></pre>
 </div>
 
+<script type="text/javascript" src="/js/api.js"></script>
 <script type="text/javascript">
-  // Perform an authenticated GET to the API server.
-  function api_get(url, username, success, error) {
-    $.ajax({
-      url: url,
-      dataType: 'json',
-      crossDomain: true,
-      beforeSend: function(xhr) {
-        var token = Cookies.get('cyclid.token');
-        var authorization = `Token ${username}:${token}`
-        xhr.setRequestHeader('Authorization', authorization);
-      },
-      success: success,
-      error: error
-    });
-  }
-
   // Convert a Cyclid job status code to a human readable status
   function job_status_to_human(status_id) {
     var statuses = {1: 'New',
@@ -143,8 +128,8 @@
 
   // Set & show the job details
   function update_job_details(job) {
-    var strap = `${job.job_name}&nbsp;<small>v${job.job_version}</small>`;
-    $('#job_header').html(strap);
+    var title = `<a href="{{linkback_url}}/job/${job.id}">${job.job_name}&nbsp;<small>v${job.job_version}</small></a>`;
+    $('#job_header').html(title);
 
     $('#job_id').text(job.id);
 

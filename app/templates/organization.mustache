@@ -1,28 +1,55 @@
-<!--<div class="container" id="organizations">-->
+<div class="container" id="organizations">
 
   <div class="alert alert-danger hidden" role="alert" id="organization_failure"></div>
 
-  <table class="sortable table table-hover table-condensed job-table" id="job-accordian">
-    <thead>
-      <th>ID</th>
-      <th>Name</th>
-      <th>Started</th>
-      <th>Status</th>
-    </thead>
+  <div class="row">
+    <div class="col-md-3">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title text-initial-caps">{{organization}}</h3>
+        </div>
+        <div>
+          Some stuff
+        </div>
+      </div>
+    </div>
 
-    <tbody></tbody>
-  </table>
+    <div class="col-md-9">
+      <div class="row">
+        <div class="col-md-12" style="margin-bottom: 10px;margin-top: 10px;display: table;">
+          <div id="pagination" style="width: 35%;display: table-cell;vertical-align: middle;"></div>
+
+          <span class="small" style="display: table-cell;vertical-align: middle;">
+            <strong>147 - 47</strong> of <strong>147</strong>
+          </span>
+        </div>
+      </div>
+
+      <table class="table table-hover table-condensed job-table" id="job-accordian">
+        <thead>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Started</th>
+          <th>Ended</th>
+          <th>Status</th>
+        </thead>
+
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
 
   <table id="job-info" class="hidden">
-    <tr data-toggle="collapse" data-target="#collapseID" class="clickable">
+    <tr id="rowID" data-toggle="collapse" data-target="#collapseID" data-parent="#job-accordian" style="cursor: pointer;">
       <td>ID</td>
       <td>Name</td>
       <td>Started</td>
+      <td>Ended</td>
       <td>Status</td>
     </tr>
 
     <tr>
-      <td colspan="4" class="hidden-row">
+      <td colspan="5" class="hidden-row">
         <div id="collapseID" class="collapse">
         </div>
       </td>
@@ -35,13 +62,38 @@
     </div>
   </div>
 
+  <script type="text/javascript" src="/vendor/jquery.bootpag.min.js"></script>
+  <script type="text/javascript" src="/js/api.js"></script>
   <script type="text/javascript">
-    function add_job(id) {
-      var accordian = $('#job-accordian tbody');
-      // Replace all of this with Mustache.js templates
-      var job_info = $('#job-info tbody');
+    // Convert a Cyclid job status code to an indicator
+    function job_status_to_indicator(status_id) {
+      var statuses = {1: 'New',
+                      2: 'Waiting',
+                      3: 'Started',
+                      4: 'Failing',
+                      10: 'Succeeded',
+                      11: 'Failed'};
+      var status = statuses[status_id];
 
-      accordian.append(job_info.html().replace(/ID/g, id));
+      var glyphs = {1: 'glyphicon-share-alt',
+                    2: 'glyphicon-time',
+                    3: 'glyphicon-refresh',
+                    4: 'glyphicon-alert',
+                    10: 'glyphicon-ok',
+                    11: 'glyphicon-remove'};
+      var glyph = glyphs[status_id];
+
+      var labels = {1: 'label-primary',
+                    2: 'label-primary',
+                    3: 'label-info',
+                    4: 'label-warning',
+                    10: 'label-success',
+                    11: 'label-danger'};
+      var label = labels[status_id];
+
+      return `<span class="label ${label}">
+                <span class="glyphicon ${glyph}" aria-hidden="true" title="${status}"></span>
+              </span>`
     }
 
     function show_job() {
@@ -52,20 +104,146 @@
 
       var url = `{{organization_url}}/jobs/${job_id}`;
       api_get(url, '{{username}}', update_job, job_get_failed);
+
+      console.log(`activating #row${job_id}`);
+      // Mark the parent row as active
+      $(`#row${job_id}`).addClass('active');
     }
 
     function hide_job() {
       var job_id = $(this).data('job_id');
       $(`#collapse${job_id}.job-info-inner`).remove();
+
+      console.log(`de-activating #row${job_id}`);
+      // Remove the parent row active highlight
+      $(`#row${job_id}`).removeClass('active');
     }
 
-    for(var i=140; i > 100; i--){
-      add_job(i);
+    function add_job(id, name, version, started, ended, status) {
+      var accordian = $('#job-accordian tbody');
+      // Replace all of this with Mustache.js templates
+      var job_info = $('#job-info tbody');
 
-      var collapse = $(`#collapse${i}`);
-      collapse.data('job_id', i);
-      collapse.on('hidden.bs.collapse', hide_job);
-      collapse.on('show.bs.collapse', show_job);
+      var date_started = new Date(started);
+      var date_ended = new Date(ended);
+
+      var new_job = job_info.html()
+      new_job = new_job.replace(/ID/g, id);
+      new_job = new_job.replace(/Name/g, name);
+      new_job = new_job.replace(/Started/g, date_started.toUTCString());
+      if( date_ended > 0 ){
+        new_job = new_job.replace(/Ended/g, date_ended.toUTCString());
+      } else {
+        new_job = new_job.replace(/Ended/g, '');
+      }
+      new_job = new_job.replace(/Status/g, job_status_to_indicator(status));
+      accordian.append(new_job);
+
+      // Add the job ID to the collapsable element so it can associate itself
+      // to the correct job
+      $(`#collapse${id}`).data('job_id', id);
     }
+
+    function job_get_list_failed(xhr) {
+      var failure_message = `Failed to retrieve job list<br>
+                             <strong>${xhr.status}:</strong> ${xhr.responseText}`;
+
+      failure_message = `List failed: ${xhr.status}`;
+      $('#organization_failure').html(failure_message);
+
+      $('#organization_failure').removeClass('hidden');
+    }
+
+    function update_job_list(jobs) {
+      console.log(jobs);
+
+      // Clear the old list
+      var accordian = $('#job-accordian tbody');
+      accordian.empty();
+
+      // Load the new list
+      var records = jobs.records;
+      var length = records.length;
+      for( var i = length - 1; i >= 0; i-- ){
+        var job = records[i];
+        console.log(`job ${i}: ${JSON.stringify(job)}`);
+
+        add_job(job.id, job.job_name, job.job_version, job.started, job.ended, job.status);
+      }
+
+      // Add collapse event handlers to each collapsable element to retrieve
+      // & remove the job info
+      $('.collapse').each(function(index) {
+        $(this).on('hidden.bs.collapse', hide_job);
+        $(this).on('show.bs.collapse', show_job);
+      });
+      // Ensure any active rows are properly hidden when a new one is shown
+      $('.collapse').on('show.bs.collapse', function () {
+          $('.collapse.in').collapse('hide');
+      });
+    }
+
+    function get_page(num) {
+      var pagination = $('#pagination');
+      var pages,
+          remainder,
+          offset,
+          limit;
+      var url;
+
+      pages = pagination.data('pages');
+      remainder = pagination.data('remainder');
+
+      if(num == pages) {
+        limit = remainder;
+        offset = 0;
+      } else {
+        limit = 100;
+        offset = remainder + ((num - 1) * 100);
+      }
+
+      console.log(`pages=${pages} remainder=${remainder} num=${num} offset=${offset} limit=${limit}`);
+
+      url = `{{organization_url}}/jobs?limit=${limit}&offset=${offset}`;
+      api_get(url, '{{username}}', update_job_list, job_get_list_failed);
+    }
+
+    function update_pagination(jobs) {
+      console.log(jobs);
+
+      // Calculate number of pages of jobs
+      var pages = jobs.total / 100;
+          remainder = pages % 1;
+      pages -= remainder;
+      remainder *= 100;
+
+      if( remainder > 0 )
+        pages += 1;
+
+      console.log(`there will be ${pages} pages with a maximum of 100 jobs each. The last page will have ${remainder} jobs`)
+
+      // Create the pagination control
+      var pagination = $('#pagination');
+
+      pagination.empty();
+      pagination.bootpag({
+        maxVisible: 5,
+        total: pages,
+        page: 1
+      }).on('page', function(event, num){
+        console.log(`page ${num}`);
+        get_page(num);
+      });
+
+      // Store the information
+      pagination.data('pages', pages);
+      pagination.data('remainder', remainder);
+
+      // Show the first page
+      get_page(1);
+    }
+
+    var url = '{{organization_url}}/jobs?stats_only=true';
+    api_get(url, '{{username}}', update_pagination, job_get_list_failed);
   </script>
-<!--</div>-->
+</div>

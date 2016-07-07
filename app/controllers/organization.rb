@@ -11,6 +11,9 @@ module Cyclid
           @crumbs = []
           @crumbs << {'name' => name.capitalize}
 
+          @organization = name
+          @linkback_url = "/#{name}"
+
           api_server = 'http://localhost:8092'
           @organization_url = "#{api_server}/organizations/#{params[:name]}"
           @current_user = current_user
@@ -21,6 +24,7 @@ module Cyclid
         get '/:name/job/:id' do
           authenticate!
 
+
           # Build breadcrumbs
           name = params[:name]
           id = params[:id]
@@ -28,6 +32,9 @@ module Cyclid
           @crumbs = []
           @crumbs << {'url' => "/#{name}", 'name' => name.capitalize}
           @crumbs << {'name' => "Job ##{id}"}
+
+          @organization = name
+          @linkback_url = "/#{name}"
 
           api_server = 'http://localhost:8092'
           @job_url = "#{api_server}/organizations/#{params[:name]}/jobs/#{params[:id]}"
