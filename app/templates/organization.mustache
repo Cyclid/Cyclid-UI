@@ -67,6 +67,7 @@
   <script type="text/javascript" src="/vendor/jquery.bootpag.min.js"></script>
   <script type="text/javascript" src="/vendor/mustache.min.js"></script>
   <script type="text/javascript" src="/js/api.js"></script>
+  <script type="text/javascript" src="/js/job.js"></script>
   <script type="text/javascript">
     // Convert a Cyclid job status code to an indicator
     function job_status_to_indicator(status_id) {
@@ -106,7 +107,7 @@
       $(`#collapse${job_id}`).html(job_info_inner);
 
       var url = `{{organization_url}}/jobs/${job_id}`;
-      api_get(url, '{{username}}', update_job, job_get_failed);
+      api_get(url, gblUsername, ji_update_all, ji_get_failed);
 
       console.log(`activating #row${job_id}`);
       // Mark the parent row as active
@@ -212,7 +213,7 @@
       console.log(`pages=${pages} remainder=${remainder} num=${num} offset=${offset} limit=${limit}`);
 
       url = `{{organization_url}}/jobs?limit=${limit}&offset=${offset}`;
-      api_get(url, '{{username}}', update_job_list, job_get_list_failed);
+      api_get(url, gblUsername, update_job_list, job_get_list_failed);
     }
 
     function update_pagination(jobs) {
@@ -250,7 +251,10 @@
       get_page(1);
     }
 
+    var gblLinkbackURL = '{{linkback_url}}';
+    var gblUsername = '{{username}}';
+
     var url = '{{organization_url}}/jobs?stats_only=true';
-    api_get(url, '{{username}}', update_pagination, job_get_list_failed);
+    api_get(url, gblUsername, update_pagination, job_get_list_failed);
   </script>
 </div>
