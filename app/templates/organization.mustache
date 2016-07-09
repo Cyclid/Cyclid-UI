@@ -39,30 +39,33 @@
     </div>
   </div>
 
-  <table id="job-info" class="hidden">
-    <tr id="rowID" data-toggle="collapse" data-target="#collapseID" data-parent="#job-accordian" style="cursor: pointer;">
-      <td>ID</td>
-      <td>Name</td>
-      <td>Started</td>
-      <td>Ended</td>
-      <td>Status</td>
+  {{=<% %>=}}
+  <script id="job-info" type="x-tmpl-mustache">
+    <tr id="row{{id}}" data-toggle="collapse" data-target="#collapse{{id}}" data-parent="#job-accordian" style="cursor: pointer;">
+      <td>{{id}}</td>
+      <td>{{name}}</td>
+      <td>{{started}}</td>
+      <td>{{ended}}</td>
+      <td>{{{status}}}</td>
     </tr>
 
     <tr>
       <td colspan="5" class="hidden-row">
-        <div id="collapseID" class="collapse">
+        <div id="collapse{{id}}" class="collapse">
         </div>
       </td>
     </tr>
-  </table>
+  </script>
+  <%={{ }}=%>
 
-  <div class="hidden">
-    <div id="job-info-inner" class="panel-body">
+  <script id="job-info-inner" type="x-tmpl-html">
+    <div id="job-info-panel" class="panel-body">
       {{> job_info}}
     </div>
-  </div>
+  </script>
 
   <script type="text/javascript" src="/vendor/jquery.bootpag.min.js"></script>
+  <script type="text/javascript" src="/vendor/mustache.min.js"></script>
   <script type="text/javascript" src="/js/api.js"></script>
   <script type="text/javascript">
     // Convert a Cyclid job status code to an indicator
@@ -98,7 +101,7 @@
 
     function show_job() {
       var job_id = $(this).data('job_id');
-      var job_info_inner = $('#job-info-inner');
+      var job_info_inner = $('#job-info-inner').html();
 
       $(`#collapse${job_id}`).html(job_info_inner);
 
@@ -112,7 +115,7 @@
 
     function hide_job() {
       var job_id = $(this).data('job_id');
-      $(`#collapse${job_id}.job-info-inner`).remove();
+      $('#job-info-panel').remove();
 
       console.log(`de-activating #row${job_id}`);
       // Remove the parent row active highlight
@@ -121,22 +124,26 @@
 
     function add_job(id, name, version, started, ended, status) {
       var accordian = $('#job-accordian tbody');
-      // Replace all of this with Mustache.js templates
-      var job_info = $('#job-info tbody');
 
-      var date_started = new Date(started);
+      var template = $('#job-info').html();
+      Mustache.parse(template);
+
+      var date_started = new Date(started).toUTCString();
       var date_ended = new Date(ended);
 
-      var new_job = job_info.html()
-      new_job = new_job.replace(/ID/g, id);
-      new_job = new_job.replace(/Name/g, name);
-      new_job = new_job.replace(/Started/g, date_started.toUTCString());
       if( date_ended > 0 ){
-        new_job = new_job.replace(/Ended/g, date_ended.toUTCString());
+        date_ended = date_ended.toUTCString();
       } else {
-        new_job = new_job.replace(/Ended/g, '');
+        date_ended = '';
       }
-      new_job = new_job.replace(/Status/g, job_status_to_indicator(status));
+
+      var data = {id: id,
+                  name: name,
+                  started: date_started,
+                  ended: date_ended,
+                  status: job_status_to_indicator(status)};
+
+      var new_job = Mustache.render(template, data);
       accordian.append(new_job);
 
       // Add the job ID to the collapsable element so it can associate itself
