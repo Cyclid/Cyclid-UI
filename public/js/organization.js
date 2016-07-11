@@ -49,12 +49,15 @@ function org_add_job(job, append) {
               ended: date_ended,
               status: ji_job_status_to_indicator(job.status)};
 
-  var new_job = Mustache.render(template, data);
+  var rendered = Mustache.render(template, data);
+  var row = $(rendered);
+  row.hide();
   if( append ) {
-    accordian.append(new_job);
+    accordian.append(row);
   } else {
-    accordian.prepend(new_job);
+    accordian.prepend(row);
   }
+  row.fadeIn('slow');
 
   // Add the job ID to the collapsable element so it can associate itself
   // to the correct job
