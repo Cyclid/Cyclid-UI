@@ -87,11 +87,11 @@ function ji_job_finished() {
   }
 }
 
-function ji_update_status(status_id) {
-  var status = ji_job_status_to_human(status_id)
+function ji_update_status(job) {
+  var status = ji_job_status_to_human(job.status)
   $('#ji_job_status').html(status);
 
-  last_status = status_id;
+  last_status = job.status;
 
   // Update the "Waiting" message appropriately
   var waiting = '<h6>Unknown</h6>';
@@ -113,6 +113,10 @@ function ji_update_status(status_id) {
       $('#ji_job_waiting').addClass('hidden');
       break;
   }
+
+  // Update the status indicator, if there is one
+  var indicator = ji_job_status_to_indicator(job.status);
+  $(`#row${job.job_id} > #status`).html(indicator);
 }
 
 // Set & show the job details
@@ -138,7 +142,7 @@ function ji_update_details(job) {
 // Update everything: job details, status & log
 function ji_update_all(job) {
   ji_update_details(job);
-  ji_update_status(job.status);
+  ji_update_status(job);
   ji_update_log(job.log);
 }
 
@@ -152,36 +156,32 @@ function ji_get_failed(xhr) {
   $('#ji_failure').removeClass('hidden');
 }
 
-function ji_update_status_and_check_completion(status_id) {
-  if( status_id != last_status ) {
-    ji_update_status(status_id);
+function ji_update_status_and_check_completion(job) {
+  if( job.status != last_status ) {
+    ji_update_status(job);
   }
 
   // Did the job end?
   if( ji_job_finished() ){
     // Update the job details so that E.g. the "Ended" time is shown
     api_get(url, gblUsername, ji_update_details, ji_get_failed);
+    clearInterval(ji_watcher);
   }
 }
 
 function ji_watch_job(url) {
-  if( ji_job_finished() ){
-    console.log(`last_status is ${last_status}: nothing to do here`);
-    clearInterval(ji_watcher);
-  } else {
-    console.log(`last_status=${last_status}`);
+  console.log(`last_status=${last_status}`);
 
-    // Check job status
-    var status_url = `${url}/status`;
-    api_get(status_url,
-            gblUsername,
-            function(data) {
-              ji_update_status_and_check_completion(data.status);
-            },
-            ji_get_failed);
+  // Check job status
+  var status_url = `${url}/status`;
+  api_get(status_url,
+          gblUsername,
+          function(status) {
+            ji_update_status_and_check_completion(status);
+          },
+          ji_get_failed);
 
-    // Update log
-    var log_url = `${url}/log`;
-    api_get(log_url, gblUsername, function(data) { ji_update_log(data.log); }, ji_get_failed);
-  }
+  // Update log
+  var log_url = `${url}/log`;
+  api_get(log_url, gblUsername, function(data) { ji_update_log(data.log); }, ji_get_failed);
 }
