@@ -12,10 +12,14 @@ function org_show_job() {
   $(`#row${job_id}`).addClass('active');
 
   // Watch the job for status updates
-  setTimeout(function() { ji_watch_job(url); }, 3000);
+  ji_watcher = setInterval(function() { ji_watch_job(url); }, 3000);
+  console.log(`ji_watcher=${ji_watcher}`);
 }
 
 function org_hide_job() {
+  console.log(`ji_watcher=${ji_watcher}`);
+  clearInterval(ji_watcher);
+
   var job_id = $(this).data('job_id');
   $('#job-info-panel').remove();
 
@@ -24,14 +28,14 @@ function org_hide_job() {
   $(`#row${job_id}`).removeClass('active');
 }
 
-function org_add_job(id, name, version, started, ended, status) {
+function org_add_job(job, append) {
   var accordian = $('#job-accordian tbody');
 
   var template = $('#job-info').html();
   Mustache.parse(template);
 
-  var date_started = new Date(started).toUTCString();
-  var date_ended = new Date(ended);
+  var date_started = new Date(job.started).toUTCString();
+  var date_ended = new Date(job.ended);
 
   if( date_ended > 0 ){
     date_ended = date_ended.toUTCString();
@@ -39,18 +43,22 @@ function org_add_job(id, name, version, started, ended, status) {
     date_ended = '';
   }
 
-  var data = {id: id,
-              name: name,
+  var data = {id: job.id,
+              name: job.job_name,
               started: date_started,
               ended: date_ended,
-              status: ji_job_status_to_indicator(status)};
+              status: ji_job_status_to_indicator(job.status)};
 
   var new_job = Mustache.render(template, data);
-  accordian.append(new_job);
+  if( append ) {
+    accordian.append(new_job);
+  } else {
+    accordian.prepend(new_job);
+  }
 
   // Add the job ID to the collapsable element so it can associate itself
   // to the correct job
-  $(`#collapse${id}`).data('job_id', id);
+  $(`#collapse${job.id}`).data('job_id', job.id);
 }
 
 function org_job_list_failed(xhr) {
@@ -63,21 +71,17 @@ function org_job_list_failed(xhr) {
   $('#organization_failure').removeClass('hidden');
 }
 
-function org_update_job_list(jobs) {
+function org_update_job_list(jobs, append) {
   console.log(jobs);
 
-  // Clear the old list
-  var accordian = $('#job-accordian tbody');
-  accordian.empty();
-
-  // Load the new list
+  // Load the list
   var records = jobs.records;
   var length = records.length;
   for( var i = length - 1; i >= 0; i-- ){
     var job = records[i];
     console.log(`job ${i}: ${JSON.stringify(job)}`);
 
-    org_add_job(job.id, job.job_name, job.job_version, job.started, job.ended, job.status);
+    org_add_job(job, append);
   }
 
   // Add collapse event handlers to each collapsable element to retrieve
@@ -90,66 +94,73 @@ function org_update_job_list(jobs) {
   $('.collapse').on('show.bs.collapse', function () {
       $('.collapse.in').collapse('hide');
   });
-}
 
-function org_load_job_list(num) {
-  var pagination = $('#pagination');
-  var pages,
-      remainder,
-      offset,
-      limit;
-  var url;
-
-  pages = pagination.data('pages');
-  remainder = pagination.data('remainder');
-
-  if(num == pages) {
-    limit = remainder;
-    offset = 0;
+  // Show or hide the "Load more" button depending on if we're at the end of the list
+  if( gblOffset > 0 ) {
+    $('#org-load-more').removeClass('hidden');
   } else {
-    limit = 100;
-    offset = remainder + ((num - 1) * 100);
+    $('#org-load-more').addClass('hidden');
   }
-
-  console.log(`pages=${pages} remainder=${remainder} num=${num} offset=${offset} limit=${limit}`);
-
-  gblCurrentPage = num;
-
-  url = `${gblOrganizationURL}/jobs?limit=${limit}&offset=${offset}`;
-  api_get(url, gblUsername, org_update_job_list, org_job_list_failed);
 }
 
-function org_update_pagination(jobs) {
-  console.log(jobs);
+function org_update_counter(total, loaded) {
+  var count = `Showing <strong>${total} - ${loaded + 1}</strong> of <strong>${total}</strong>`;
+  $('#org-counter').html(count);
+}
 
-  // Calculate number of pages of jobs
-  var pages = jobs.total / 100;
-      remainder = pages % 1;
-  pages -= remainder;
-  remainder *= 100;
+function org_load_chunk(start) {
+  var limit = 100;
+  var offset = Math.max(start, limit) - limit;
 
-  if( remainder > 0 )
-    pages += 1;
+  // If we're on the last "chunk", there may be less than 'limit' jobs left to
+  // load. In that case we need to adjust the limit; we can cheat and use the
+  // currently set global offset which happens to be the total remainder of
+  // the jobs.
+  if( offset == 0){
+    limit = gblOffset;
+  }
+  console.log(`offset=${offset} limit=${limit}`);
 
-  console.log(`there will be ${pages} pages with a maximum of 100 jobs each. The last page will have ${remainder} jobs`)
+  // Remember the current offset
+  gblOffset = offset;
 
-  // Create the pagination control
-  var pagination = $('#pagination');
+  // Update the counter
+  org_update_counter(gblTotal, gblOffset);
 
-  pagination.empty();
-  pagination.bootpag({
-    maxVisible: 5,
-    total: pages,
-    page: 1
-  }).on('page', function(event, num){
-    console.log(`page ${num}`);
-    org_load_job_list(num);
-  });
+  var url = `${gblOrganizationURL}/jobs?limit=${limit}&offset=${offset}`;
+  api_get(url, gblUsername, function(jobs) { org_update_job_list(jobs, true); }, org_job_list_failed);
+}
 
-  // Store the information
-  pagination.data('pages', pages);
-  pagination.data('remainder', remainder);
+function org_apply_updates(stats) {
+  // Are there any new jobs?
+  var count = stats.total - gblTotal;
+  if( count > 0 ){
+    console.log(`loading ${count} new jobs...`);
 
-  // Show the first page
-  org_load_job_list(1);
+    var url = `${gblOrganizationURL}/jobs?limit=${count}&offset=${gblTotal}`;
+    api_get(url, gblUsername, function(jobs) { org_update_job_list(jobs, false); }, org_job_list_failed);
+
+    gblTotal = stats.total;
+
+    // Update the counter
+    org_update_counter(gblTotal, gblOffset);
+  }
+}
+
+function org_watch_job_list() {
+  // Get the current total number of jobs
+  var url = `${gblOrganizationURL}/jobs?stats_only=true`;
+  api_get(url, gblUsername, org_apply_updates, org_job_list_failed);
+}
+
+function org_initialize_job_list(stats) {
+  console.log(stats);
+
+  gblTotal = stats.total;
+
+  // Load the first set of jobs
+  org_load_chunk(gblTotal, 100);
+
+  // Watch for any new jobs
+  setInterval(org_watch_job_list, 3000);
 }

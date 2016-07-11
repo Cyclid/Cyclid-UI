@@ -17,14 +17,11 @@
     <div class="col-md-9">
       <div class="row">
         <div class="col-md-12" style="margin-bottom: 10px;margin-top: 10px;display: table;">
-          <div id="pagination" style="width: 35%;display: table-cell;vertical-align: middle;"></div>
-
-          <span class="small" style="display: table-cell;vertical-align: middle;">
-            <strong>147 - 47</strong> of <strong>147</strong>
-          </span>
+          <span id="org-counter" class="small" style="display: table-cell;vertical-align: middle;"></span>
         </div>
       </div>
 
+      <div style="height: 70vh;overflow-y: auto;">
       <table class="table table-hover table-condensed job-table" id="job-accordian">
         <thead>
           <th>ID</th>
@@ -34,14 +31,28 @@
           <th>Status</th>
         </thead>
 
+        <tfoot>
+          <tr>
+            <td colspan="5">
+              <div id="org-load-more" class="panel panel-default hidden">
+                <div class="panel-body text-center pad-2 clickable">
+                  <strong>Load more</strong><br>
+                  <i class="fa fa-angle-double-down" aria-hidden="true"></i>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tfoot>
+
         <tbody></tbody>
       </table>
+      </div>
     </div>
   </div>
 
   {{=<% %>=}}
   <script id="job-info" type="x-tmpl-mustache">
-    <tr id="row{{id}}" data-toggle="collapse" data-target="#collapse{{id}}" data-parent="#job-accordian" style="cursor: pointer;">
+    <tr id="row{{id}}" data-toggle="collapse" data-target="#collapse{{id}}" data-parent="#job-accordian" class="clickable">
       <td>{{id}}</td>
       <td>{{name}}</td>
       <td>{{started}}</td>
@@ -65,7 +76,6 @@
   </script>
 </div>
 
-<script type="text/javascript" src="/vendor/jquery.bootpag.min.js"></script>
 <script type="text/javascript" src="/vendor/mustache.min.js"></script>
 <script type="text/javascript" src="/js/api.js"></script>
 <script type="text/javascript" src="/js/job.js"></script>
@@ -74,7 +84,18 @@
   var gblUsername = '{{username}}';
   var gblOrganizationURL = '{{organization_url}}';
   var gblLinkbackURL = '{{linkback_url}}';
+  var gblOffset = 0,
+      gblTotal = 0;
 
+  $( window ).resize( function() {
+    $('#job-accordian').height('70vh');
+  });
+
+  $('#org-load-more').on('click', function () {
+    org_load_chunk(gblOffset);
+  });
+
+  // Find the number of jobs & load the initial set
   var url = `${gblOrganizationURL}/jobs?stats_only=true`;
-  api_get(url, gblUsername, org_update_pagination, org_job_list_failed);
+  api_get(url, gblUsername, org_initialize_job_list, org_job_list_failed);
 </script>

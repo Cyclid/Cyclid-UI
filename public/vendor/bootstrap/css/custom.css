@@ -4,6 +4,7 @@ body {
   height: 100%;
 }
 body {
+  min-height: 100%;
   background-color: white;
 }
 
@@ -144,6 +145,15 @@ a:hover {
   text-transform: capitalize;
 }
 
+/* */
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:hover {
+  background-color: whitesmoke;
+}
+
 /* Remove the border from tables */
 .no-border>thead>tr>th,
 .no-border>tbody>tr>th,
@@ -159,22 +169,6 @@ a:hover {
   padding: 0px !important;
   border: 0px !important;
   background-color: white;
-}
-
-/* Pagination control */
-.bootpag {
-  display: block !important;
-  margin: 0px !important;
-}
-
-.pagination>.active>a,
-.pagination>.active>a:focus,
-.pagination>.active>a:hover,
-.pagination>.active>span,
-.pagination>.active>span:focus,
-.pagination>.active>span:hover {
-  background-color: whitesmoke;
-  border-color: darkgrey;
 }
 
 .job-table {

@@ -167,6 +167,7 @@ function ji_update_status_and_check_completion(status_id) {
 function ji_watch_job(url) {
   if( ji_job_finished() ){
     console.log(`last_status is ${last_status}: nothing to do here`);
+    clearInterval(ji_watcher);
   } else {
     console.log(`last_status=${last_status}`);
 
@@ -182,8 +183,5 @@ function ji_watch_job(url) {
     // Update log
     var log_url = `${url}/log`;
     api_get(log_url, gblUsername, function(data) { ji_update_log(data.log); }, ji_get_failed);
-
-    // Check again...
-    setTimeout(function() { ji_watch_job(url); }, 3000);
   }
 }
