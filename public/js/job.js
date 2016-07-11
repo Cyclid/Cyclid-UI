@@ -29,6 +29,37 @@ function ji_job_status_to_human(status_id) {
           </span>`
 }
 
+// Convert a Cyclid job status code to an indicator
+function ji_job_status_to_indicator(status_id) {
+  var statuses = {1: 'New',
+                  2: 'Waiting',
+                  3: 'Started',
+                  4: 'Failing',
+                  10: 'Succeeded',
+                  11: 'Failed'};
+  var status = statuses[status_id];
+
+  var glyphs = {1: 'glyphicon-share-alt',
+                2: 'glyphicon-time',
+                3: 'glyphicon-refresh',
+                4: 'glyphicon-alert',
+                10: 'glyphicon-ok',
+                11: 'glyphicon-remove'};
+  var glyph = glyphs[status_id];
+
+  var labels = {1: 'label-primary',
+                2: 'label-primary',
+                3: 'label-info',
+                4: 'label-warning',
+                10: 'label-success',
+                11: 'label-danger'};
+  var label = labels[status_id];
+
+  return `<span class="label ${label}">
+            <span class="glyphicon ${glyph}" aria-hidden="true" title="${status}"></span>
+          </span>`
+}
+
 // Set & show the job log element
 function ji_update_log(log_text) {
   // Show the log

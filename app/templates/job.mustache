@@ -1,21 +1,20 @@
 <div class="container" id="job">
   {{> job_info}}
-
-  <script type="text/javascript" src="/js/api.js"></script>
-  <script type="text/javascript" src="/js/job.js"></script>
-  <script>
-    // Retrieve the job data from the API & call either the success or failure handlers
-    var last_status = 0;
-    var url = '{{job_url}}';
-
-    var gblLinkbackURL = '{{linkback_url}}';
-    var gblUsername = '{{username}}';
-
-    // Inital get & display the job details, status & log
-    api_get(url, gblUsername, ji_update_all, ji_get_failed);
-
-    // Watch the job for status updates
-    setTimeout(function() { ji_watch_job(url); }, 3000);
-  </script>
-
 </div>
+
+<script type="text/javascript" src="/js/api.js"></script>
+<script type="text/javascript" src="/js/job.js"></script>
+<script>
+  var gblLinkbackURL = '{{linkback_url}}';
+  var gblUsername = '{{username}}';
+
+  // Retrieve the job data from the API & call either the success or failure handlers
+  var last_status = 0;
+  var url = '{{job_url}}';
+
+  // Inital get & display the job details, status & log
+  api_get(url, gblUsername, ji_update_all, ji_get_failed);
+
+  // Watch the job for status updates
+  setTimeout(function() { ji_watch_job(url); }, 3000);
+</script>
