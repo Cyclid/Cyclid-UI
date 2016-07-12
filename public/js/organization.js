@@ -34,19 +34,12 @@ function org_add_job(job, append) {
   var template = $('#job-info').html();
   Mustache.parse(template);
 
-  var date_started = new Date(job.started).toUTCString();
-  var date_ended = new Date(job.ended);
-
-  if( date_ended > 0 ){
-    date_ended = date_ended.toUTCString();
-  } else {
-    date_ended = '';
-  }
+  var duration = ji_calculate_duration(job.started, job.ended);
 
   var data = {id: job.id,
               name: job.job_name,
-              started: date_started,
-              ended: date_ended,
+              started: new Date(job.started).toUTCString(),
+              duration: duration,
               status: ji_job_status_to_indicator(job.status)};
 
   var rendered = Mustache.render(template, data);

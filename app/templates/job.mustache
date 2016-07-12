@@ -16,5 +16,5 @@
   api_get(url, gblUsername, ji_update_all, ji_get_failed);
 
   // Watch the job for status updates
-  setInterval(function() { ji_watch_job(url); }, 3000);
+  var ji_watcher = setInterval(function() { ji_watch_job(url); }, 3000);
 </script>

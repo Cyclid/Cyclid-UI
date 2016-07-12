@@ -60,6 +60,18 @@ function ji_job_status_to_indicator(status_id) {
           </span>`
 }
 
+function ji_calculate_duration(started, ended) {
+  var date_started = new Date(started);
+  var date_ended = new Date(ended);
+
+  var duration = '';
+  if( date_ended > 0 ){
+    duration = new Date(date_ended.getTime() - date_started.getTime()).toISOString().substr(11, 8);
+  }
+
+  return duration;
+}
+
 // Set & show the job log element
 function ji_update_log(log_text) {
   // Show the log
@@ -136,6 +148,9 @@ function ji_update_details(job) {
     $('#ji_job_ended').text(ended.toUTCString());
   }
 
+  var duration = ji_calculate_duration(job.started, job.ended);
+  $('#ji_job_duration').text(duration);
+
   $('#ji_details').removeClass('hidden');
 }
 
@@ -156,7 +171,7 @@ function ji_get_failed(xhr) {
   $('#ji_failure').removeClass('hidden');
 }
 
-function ji_update_status_and_check_completion(job) {
+function ji_update_status_and_check_completion(url, job) {
   if( job.status != last_status ) {
     ji_update_status(job);
   }
@@ -177,7 +192,7 @@ function ji_watch_job(url) {
   api_get(status_url,
           gblUsername,
           function(status) {
-            ji_update_status_and_check_completion(status);
+            ji_update_status_and_check_completion(url, status);
           },
           ji_get_failed);
 
