@@ -8,7 +8,11 @@ function org_show_job() {
   api_get(url, gblUsername, ji_update_all, ji_get_failed);
 
   // Watch the job for status updates
-  addNamedInterval(`watcher${job_id}`, function() { ji_watch_job(url); }, 3000);
+  (function(j, u) {
+    addNamedInterval(`watcher${j}`,
+                      function() { ji_watch_job(u); },
+                      3000);
+  })(job_id, url);
 
   // Mark the parent row as active
   $(`#row${job_id}`).addClass('active');
@@ -16,10 +20,12 @@ function org_show_job() {
 
 function org_hide_job() {
   var job_id = $(this).data('job_id');
-  $(`#collapse${job_id} > #job-info-panel`).remove();
 
   // Clear any watchers
   removeNamedInterval(`watcher${job_id}`);
+
+  // Remove the job info panel
+  $(`#collapse${job_id} > #job-info-panel`).remove();
 
   // Remove the parent row active highlight
   $(`#row${job_id}`).removeClass('active');
@@ -68,7 +74,7 @@ function org_job_list_failed(xhr) {
                          <strong>${xhr.status}:</strong> ${xhr.responseText}`;
 
   failure_message = `List failed: ${xhr.status}`;
-  $('#organization_failure').html(failure_message);
+  $('#organization_failure > #error_message').html(failure_message);
 
   $('#organization_failure').removeClass('hidden');
 }
@@ -204,5 +210,5 @@ function org_initialize_job_list(stats) {
   org_load_chunk(gblTotal, 100);
 
   // Watch for any new jobs
-  setInterval(org_watch_job_list, 3000);
+  addNamedInterval('job_list', org_watch_job_list, 3000);
 }

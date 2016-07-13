@@ -107,12 +107,11 @@ function ji_job_active(job_status) {
 function ji_update_status(job) {
   var status = ji_job_status_to_human(job.status)
   $('#ji_job_status').html(status);
-
-  last_status = job.status;
+  $('#ji_job_status').data('status', job.status);
 
   // Update the "Waiting" message appropriately
   var waiting = '<h6>Unknown</h6>';
-  switch(last_status) {
+  switch(job.status) {
     case 1:
     case 2:
       waiting = '<h6><i class="fa fa-spinner fa-pulse"></i>&nbsp;Waiting for job to start...</h6>'
@@ -171,18 +170,21 @@ function ji_get_failed(xhr) {
                            <h2>Failed to retrieve job</h2><br>
                            <strong>${xhr.status}:</strong> ${xhr.responseText}
                          </p>`
-  $('#ji_failure').html(failure_message);
+  $('#ji_failure > #error_message').html(failure_message);
 
   $('#ji_failure').removeClass('hidden');
 }
 
 function ji_update_status_and_check_completion(url, job) {
+  var last_status = $('#ji_job_status').data('status');
   if( job.status != last_status ) {
     ji_update_status(job);
   }
 
   // Did the job end?
-  if( ji_job_finished(last_status) ){
+  if( ji_job_finished(job.status) ){
+    console.log(`job #${job.job_id} ended`);
+
     // Update the job details so that E.g. the "Ended" time is shown
     api_get(url, gblUsername, ji_update_details, ji_get_failed);
 
@@ -192,18 +194,22 @@ function ji_update_status_and_check_completion(url, job) {
 }
 
 function ji_watch_job(url) {
-  console.log(`last_status=${last_status}`);
+  console.log(`ji_watch_job(${url})`);
 
   // Check job status
   var status_url = `${url}/status`;
+  console.log(`updating status from ${status_url}`);
   api_get(status_url,
           gblUsername,
-          function(status) {
-            ji_update_status_and_check_completion(url, status);
+          function(job) {
+            ji_update_status_and_check_completion(url, job);
           },
           ji_get_failed);
 
   // Update log
   var log_url = `${url}/log`;
+  console.log(`updating log from ${log_url}`);
   api_get(log_url, gblUsername, function(data) { ji_update_log(data.log); }, ji_get_failed);
+
+  console.log(`ji_watch_job(${url}) finished`);
 }
