@@ -1,25 +1,25 @@
 // Convert a Cyclid job status code to a human readable status
 function ji_job_status_to_human(status_id) {
-  var statuses = {1: 'New',
-                  2: 'Waiting',
-                  3: 'Started',
-                  4: 'Failing',
+  var statuses = {0: 'New',
+                  1: 'Waiting',
+                  2: 'Started',
+                  3: 'Failing',
                   10: 'Succeeded',
                   11: 'Failed'};
   var status = statuses[status_id];
 
-  var glyphs = {1: 'glyphicon-share-alt',
-                2: 'glyphicon-time',
-                3: 'glyphicon-refresh',
-                4: 'glyphicon-alert',
+  var glyphs = {0: 'glyphicon-share-alt',
+                1: 'glyphicon-time',
+                2: 'glyphicon-refresh',
+                3: 'glyphicon-alert',
                 10: 'glyphicon-ok',
                 11: 'glyphicon-remove'};
   var glyph = glyphs[status_id];
 
-  var labels = {1: 'label-primary',
-                2: 'label-primary',
-                3: 'label-info',
-                4: 'label-warning',
+  var labels = {0: 'label-primary',
+                1: 'label-primary',
+                2: 'label-info',
+                3: 'label-warning',
                 10: 'label-success',
                 11: 'label-danger'};
   var label = labels[status_id];
@@ -31,26 +31,26 @@ function ji_job_status_to_human(status_id) {
 
 // Convert a Cyclid job status code to an indicator
 function ji_job_status_to_indicator(status_id) {
-  var statuses = {1: 'New',
-                  2: 'Waiting',
-                  3: 'Started',
-                  4: 'Failing',
+  var statuses = {0: 'New',
+                  1: 'Waiting',
+                  2: 'Started',
+                  3: 'Failing',
                   10: 'Succeeded',
                   11: 'Failed'};
   var status = statuses[status_id];
 
-  var glyphs = {1: 'glyphicon-share-alt',
-                2: 'glyphicon-time',
-                3: 'glyphicon-refresh',
-                4: 'glyphicon-alert',
+  var glyphs = {0: 'glyphicon-share-alt',
+                1: 'glyphicon-time',
+                2: 'glyphicon-refresh',
+                3: 'glyphicon-alert',
                 10: 'glyphicon-ok',
                 11: 'glyphicon-remove'};
   var glyph = glyphs[status_id];
 
-  var labels = {1: 'label-primary',
-                2: 'label-primary',
-                3: 'label-info',
-                4: 'label-warning',
+  var labels = {0: 'label-primary',
+                1: 'label-primary',
+                2: 'label-info',
+                3: 'label-warning',
                 10: 'label-success',
                 11: 'label-danger'};
   var label = labels[status_id];
@@ -91,12 +91,17 @@ function ji_update_log(log_text) {
 }
 
 // Is the job in a "Failed" or "Succeeded" state?
-function ji_job_finished() {
-  if( last_status == 10 || last_status == 11 ) {
+function ji_job_finished(job_status) {
+  if( job_status == 10 || job_status == 11 ) {
     return true;
   } else {
     return false;
   }
+}
+
+// Is the job still active?
+function ji_job_active(job_status) {
+  return !ji_job_finished(job_status);
 }
 
 function ji_update_status(job) {
@@ -177,7 +182,7 @@ function ji_update_status_and_check_completion(url, job) {
   }
 
   // Did the job end?
-  if( ji_job_finished() ){
+  if( ji_job_finished(last_status) ){
     // Update the job details so that E.g. the "Ended" time is shown
     api_get(url, gblUsername, ji_update_details, ji_get_failed);
 

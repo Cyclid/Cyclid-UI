@@ -52,6 +52,15 @@ function org_add_job(job, append) {
   // Add the job ID to the collapsable element so it can associate itself
   // to the correct job
   $(`#collapse${job.id}`).data('job_id', job.id);
+
+  // If the job is active, add it to the active list
+  if( window.active_jobs == undefined )
+    window.active_jobs = [];
+
+  if( ji_job_active(job.status) ){
+    var active = {job_id: job.id, status: job.status};
+    window.active_jobs.push(active);
+  }
 }
 
 function org_job_list_failed(xhr) {
@@ -140,10 +149,50 @@ function org_apply_updates(stats) {
   }
 }
 
+function org_apply_indicator_update(job, active, idx) {
+  console.log(`callback for job #${active.job_id}: old status is ${active.status}, new status is ${job.status}`);
+  if( job.status == 0 ){
+    console.log(`got a 0 status: ${JSON.stringify(job)}`);
+  }
+
+  if( job.status != active.status ){
+    console.log(`job #${job.job_id} status changed from ${active.status} to ${job.status}`);
+
+    var indicator = ji_job_status_to_indicator(job.status);
+    $(`#row${job.job_id} > #status`).html(indicator);
+
+    // Did the job finish? If so we can stop watching it
+    if( ji_job_finished(job.status) ) {
+      console.log(`job #${job.job_id} has finished; removing from active_jobs at position ${idx}`);
+      window.active_jobs.splice(idx, 1);
+    } else {
+      // Remember the current status
+      active.status = job.status;
+      window.active_jobs[idx] = active;
+    }
+  }
+}
+
 function org_watch_job_list() {
   // Get the current total number of jobs
   var url = `${gblOrganizationURL}/jobs?stats_only=true`;
   api_get(url, gblUsername, org_apply_updates, org_job_list_failed);
+
+  // Check the status of any current jobs
+  var length = window.active_jobs.length;
+  for( var idx = 0; idx < length; idx++ ){
+    var active = window.active_jobs[idx];
+
+    console.log(`checking status of job #${active.job_id}: current status is ${active.status}`);
+
+    (function(a, i){
+    url = `${gblOrganizationURL}/jobs/${active.job_id}/status`
+    api_get(url,
+            gblUsername,
+            function(job) { org_apply_indicator_update(job, a, i); },
+            org_job_list_failed);
+    })(active, idx);
+  }
 }
 
 function org_initialize_job_list(stats) {
