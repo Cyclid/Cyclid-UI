@@ -24,7 +24,6 @@ module Cyclid
         get '/:name/job/:id' do
           authenticate!
 
-
           # Build breadcrumbs
           name = params[:name]
           id = params[:id]
@@ -38,11 +37,11 @@ module Cyclid
 
           api_server = 'http://localhost:8092'
           @job_url = "#{api_server}/organizations/#{params[:name]}/jobs/#{params[:id]}"
+          @job_id = id
           @current_user = current_user
 
           mustache :job
         end
-
       end
     end
   end

@@ -180,7 +180,9 @@ function ji_update_status_and_check_completion(url, job) {
   if( ji_job_finished() ){
     // Update the job details so that E.g. the "Ended" time is shown
     api_get(url, gblUsername, ji_update_details, ji_get_failed);
-    clearInterval(ji_watcher);
+
+    // Find any timer associated with the job info & remove it
+    removeNamedInterval(`watcher${job.job_id}`);
   }
 }
 

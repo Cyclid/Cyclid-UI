@@ -2,6 +2,7 @@
   {{> job_info}}
 </div>
 
+<script type="text/javascript" src="/js/cyclid.js"></script>
 <script type="text/javascript" src="/js/api.js"></script>
 <script type="text/javascript" src="/js/job.js"></script>
 <script>
@@ -11,10 +12,11 @@
   // Retrieve the job data from the API & call either the success or failure handlers
   var last_status = 0;
   var url = '{{job_url}}';
+  var job_id = {{job_id}};
 
   // Inital get & display the job details, status & log
   api_get(url, gblUsername, ji_update_all, ji_get_failed);
 
   // Watch the job for status updates
-  var ji_watcher = setInterval(function() { ji_watch_job(url); }, 3000);
+  addNamedInterval(`watcher${job_id}`, function() { ji_watch_job(url); }, 3000);
 </script>

@@ -21,31 +21,31 @@
         </div>
       </div>
 
-      <div style="height: 70vh;overflow-y: auto;">
-      <table class="table table-hover table-condensed job-table" id="job-accordian">
-        <thead>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Started</th>
-          <th>Duration</th>
-          <th>Status</th>
-        </thead>
+      <div style="height: 65vh;overflow-y: auto;">
+        <table class="table table-hover table-condensed job-table" id="job-accordian">
+          <thead>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Started</th>
+            <th>Duration</th>
+            <th>Status</th>
+          </thead>
 
-        <tfoot>
-          <tr>
-            <td colspan="5">
-              <div id="org-load-more" class="panel panel-default hidden">
-                <div class="panel-body text-center pad-2 clickable">
-                  <strong>Load more</strong><br>
-                  <i class="fa fa-angle-double-down" aria-hidden="true"></i>
+          <tfoot>
+            <tr>
+              <td colspan="5">
+                <div id="org-load-more" class="panel panel-default hidden">
+                  <div class="panel-body text-center pad-2 clickable">
+                    <strong>Load more</strong><br>
+                    <i class="fa fa-angle-double-down" aria-hidden="true"></i>
+                  </div>
                 </div>
-              </div>
-            </td>
-          </tr>
-        </tfoot>
+              </td>
+            </tr>
+          </tfoot>
 
-        <tbody></tbody>
-      </table>
+          <tbody></tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -77,6 +77,7 @@
 </div>
 
 <script type="text/javascript" src="/vendor/mustache.min.js"></script>
+<script type="text/javascript" src="/js/cyclid.js"></script>
 <script type="text/javascript" src="/js/api.js"></script>
 <script type="text/javascript" src="/js/job.js"></script>
 <script type="text/javascript" src="/js/organization.js"></script>
@@ -88,7 +89,7 @@
       gblTotal = 0;
 
   $( window ).resize( function() {
-    $('#job-accordian').height('70vh');
+    $('#job-accordian').height('65vh');
   });
 
   $('#org-load-more').on('click', function () {

@@ -7,23 +7,20 @@ function org_show_job() {
   var url = `${gblOrganizationURL}/jobs/${job_id}`;
   api_get(url, gblUsername, ji_update_all, ji_get_failed);
 
-  console.log(`activating #row${job_id}`);
+  // Watch the job for status updates
+  addNamedInterval(`watcher${job_id}`, function() { ji_watch_job(url); }, 3000);
+
   // Mark the parent row as active
   $(`#row${job_id}`).addClass('active');
-
-  // Watch the job for status updates
-  ji_watcher = setInterval(function() { ji_watch_job(url); }, 3000);
-  console.log(`ji_watcher=${ji_watcher}`);
 }
 
 function org_hide_job() {
-  console.log(`ji_watcher=${ji_watcher}`);
-  clearInterval(ji_watcher);
-
   var job_id = $(this).data('job_id');
-  $('#job-info-panel').remove();
+  $(`#collapse${job_id} > #job-info-panel`).remove();
 
-  console.log(`de-activating #row${job_id}`);
+  // Clear any watchers
+  removeNamedInterval(`watcher${job_id}`);
+
   // Remove the parent row active highlight
   $(`#row${job_id}`).removeClass('active');
 }
