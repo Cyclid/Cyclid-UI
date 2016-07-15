@@ -1,0 +1,40 @@
+<div class="container" id="user">
+  <div class="alert alert-danger alert-dismissible hidden" role="alert" id="user_failure">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <div id="error_message"></div>
+  </div>
+
+  <div class="panel panel-default hidden" id="user_info">
+    <div class="panel-heading">
+      <h3 class="panel-title text-initial-caps">{{username}}</h3>
+    </div>
+
+    <div class="row">
+      <div class="col-md-2">
+        <div class="container pad-20" id="user_avatar">
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="dl-horizontal text-muted pad-20">
+          <dt>Email</dt><dd id="user_email"></dd>
+          <dt>Organizations</dt><dd id="user_org_list"></dd>
+        </div>
+      </div>
+
+      <div class="col-md-6 pad-20">
+        <div id="user_dump"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript" src="/vendor/jquery.md5.js"></script>
+<script type="text/javascript" src="/js/api.js"></script>
+<script type="text/javascript" src="/js/user.js"></script>
+<script type="text/javascript">
+  var gblUsername = '{{username}}';
+  var gblUserURL = '{{user_url}}';
+
+  api_get(gblUserURL, gblUsername, user_update_details, user_get_failed);
+</script>

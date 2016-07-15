@@ -127,6 +127,12 @@ a:hover {
 .pad-10 {
   padding: 10px;
 }
+.pad-20 {
+  padding: 20px;
+}
+.pad-30 {
+  padding: 30px;
+}
 
 /* Why does dl-horizontal want so much space? */
 .dl-horizontal dt {

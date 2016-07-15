@@ -45,7 +45,7 @@
             </ul>
 
             <ul class="nav navbar-nav navbar-right">
-              <p class="navbar-text">{{username}}</p>
+              <li><a href="/user/{{username}}">{{username}}</a></li>
               <li><a href="/logout">Logout</a></li>
             </ul>
 
@@ -62,11 +62,11 @@
           var crumbsLength = crumbs.length;
           for (var i = 0; i < crumbsLength; i++) {
             var name = crumbs[i].name;
-            if (i + 1 == crumbsLength) {
-              $('#nav-breadcrumbs').append(`<li class="active">${name}</a></li>`);
-            } else {
-              var url = crumbs[i].url;
+            var url = crumbs[i].url;
+            if (url) {
               $('#nav-breadcrumbs').append(`<li><a href="${url}"}>${name}</a></li>`);
+            } else {
+              $('#nav-breadcrumbs').append(`<li class="active">${name}</li>`);
             }
           }
         }
