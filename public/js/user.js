@@ -11,6 +11,10 @@ function user_get_failed(xhr){
 function user_update_details(user){
   $('#user_dump').html(JSON.stringify(user));
 
+  $('#user_heading').text(user.username);
+
+  name = user.name || user.username;
+  $('#user_name').text(name);
   $('#user_email').text(user.email);
 
   var length = user.organizations.length;
