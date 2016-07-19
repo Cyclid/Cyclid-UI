@@ -15,16 +15,75 @@
         </div>
       </div>
 
-      <div class="col-md-4">
+      <div class="col-md-10">
         <h3 id="user_name"></h3>
-        <div class="dl-horizontal text-muted pad-20">
-          <dt>Email</dt><dd id="user_email"></dd>
-          <dt>Organizations</dt><dd id="user_org_list"></dd>
+
+        <div class="col-md-6">
+          <div class="dl-horizontal text-muted pad-20">
+            <dt>Email</dt><dd id="user_email"></dd>
+            <dt>Organizations</dt><dd id="user_org_list"></dd>
+          </div>
+        </div>
+
+        <div class="col-md-6 pad-20">
+          <div class="row">
+            <div class="col-md-4 text-muted pad-5">
+              <button type="button" class="btn btn-default" style="width:100%;" data-toggle="modal" data-target="#user_password_modal">Change password</button>
+            </div>
+            <div class="col-md-8 text-muted pad-5">
+              <small>Change your password and reset your signing secret.</small>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4 text-muted pad-5">
+              <button type="button" class="btn btn-default dropdown-toggle" style="width:100%;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Download config
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <li><a href="#">Org #1</a></li>
+                <li><a href="#">Org #2</a></li>
+              </ul>
+            </div>
+            <div class="col-md-8 text-muted pad-5">
+              <!-- make this a dropdown; one item per. organization? -->
+              <small>Download a Cyclid client configuration for your organizations.</small>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="col-md-6 pad-20">
-        <div id="user_dump"></div>
+    </div>
+  </div>
+</div>
+
+<!-- change password modal -->
+<div class="modal fade" id="user_password_modal" role="dialog" aria-labelledby="user_password_modal_label">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="user_password_modal_label">Change password</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-group">
+            <label for="user_password_password_1">New password</label>
+            <input type="text" class="form-control" placeholder="Password" id="user_password_password_1">
+          </div>
+          <div class="form-group">
+            <label for="user_password_password_2">Confirm password</label>
+            <input type="text" class="form-control" placeholder="Password" id="user_password_password_2">
+          </div>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox">Reset signing secret
+            </label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Change password</button>
       </div>
     </div>
   </div>
