@@ -1,6 +1,6 @@
 module Cyclid; module UI; module Views
 class Layout < Mustache
-  attr_reader :organization, :linkback_url
+  attr_reader :organization, :api_url, :linkback_url
 
   def username
     @current_user.username || 'Nobody'

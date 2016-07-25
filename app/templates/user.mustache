@@ -31,23 +31,7 @@
               <button type="button" class="btn btn-default" style="width:100%;" data-toggle="modal" data-target="#user_password_modal">Change password</button>
             </div>
             <div class="col-md-8 text-muted pad-5">
-              <small>Change your password and reset your signing secret.</small>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-4 text-muted pad-5">
-              <button type="button" class="btn btn-default dropdown-toggle" style="width:100%;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Download config
-                <span class="caret"></span>
-              </button>
-              <ul class="dropdown-menu">
-                <li><a href="#">Org #1</a></li>
-                <li><a href="#">Org #2</a></li>
-              </ul>
-            </div>
-            <div class="col-md-8 text-muted pad-5">
-              <!-- make this a dropdown; one item per. organization? -->
-              <small>Download a Cyclid client configuration for your organizations.</small>
+              <small>Change your password and reset your client token.</small>
             </div>
           </div>
         </div>
@@ -65,25 +49,36 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="user_password_modal_label">Change password</h4>
       </div>
+
       <div class="modal-body">
-        <form>
+        <div class="alert alert-danger alert-dismissible hidden" role="alert" id="user_password_failure">
+          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <div id="user_password_error_message"></div>
+        </div>
+
+        <form id="user_password_form">
           <div class="form-group">
             <label for="user_password_password_1">New password</label>
-            <input type="text" class="form-control" placeholder="Password" id="user_password_password_1">
+            <input type="password" class="form-control" placeholder="Password" id="user_password_password_1">
           </div>
           <div class="form-group">
             <label for="user_password_password_2">Confirm password</label>
-            <input type="text" class="form-control" placeholder="Password" id="user_password_password_2">
+            <input type="password" class="form-control" placeholder="Password" id="user_password_password_2">
           </div>
           <div class="checkbox">
             <label>
-              <input type="checkbox">Reset signing secret
+              <input type="checkbox" id="user_password_reset_signing">Reset client token
             </label>
+          </div>
+          <div class="form-group">
+            <label for="user_password_secret">Client token</label>
+            <input type="text" class="form-control" placeholder="Token" id="user_password_secret" disabled>
           </div>
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Change password</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" id="user_password_cancel">Cancel</button>
+        <button type="submit" class="btn btn-default" data-dismiss="modal" id="user_password_ok">Change password</button>
       </div>
     </div>
   </div>
@@ -94,6 +89,7 @@
 <script type="text/javascript" src="/js/user.js"></script>
 <script type="text/javascript">
   var gblUsername = '{{username}}';
+  var gblAPIURL = '{{api_url}}';
   var gblUserURL = '{{user_url}}';
 
   api_get(gblUserURL, gblUsername, user_update_details, user_get_failed);
