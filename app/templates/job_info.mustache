@@ -1,0 +1,40 @@
+<div class="alert alert-danger alert-dismissible hidden" role="alert" id="ji_failure">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+  <div id="error_message"></div>
+</div>
+
+<div class="panel panel-default hidden" id="ji_details">
+  <div class="panel-heading">
+    <h3 class="panel-title"><span id="ji_header"></span></h3>
+  </div>
+
+  <div class="row">
+    <!-- standard job attributes -->
+    <div class="col-md-8">
+      <div class="col-md-6">
+        <div class="dl-horizontal text-muted">
+          <dt>Job</dt><dd id="ji_job_id"></dd>
+          <dt>Started</dt><dd id="ji_job_started"></dd>
+          <dt>Ended</dt><dd id="ji_job_ended"></dd>
+        </div>
+      </div>
+
+      <!-- additional job attributes -->
+      <div class="col-md-6">
+        <div class="dl-horizontal text-muted">
+          <dt>Duration</dt><dd id="ji_job_duration"></dd>
+        </div>
+      </div>
+    </div>
+
+    <!-- status -->
+    <div class="col-md-3 pull-right">
+      <h4><span id="ji_job_status"></span></h4>
+      <span id="ji_job_waiting"></span>
+    </div>
+  </div>
+</div>
+
+<div id="ji_log_outer" class="hidden">
+  <pre id="ji_log_inner" class="pre-scrollable job-log small"></pre>
+</div>

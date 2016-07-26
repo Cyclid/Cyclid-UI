@@ -37,7 +37,7 @@ module Cyclid
         config.serialize_from_session do |username|
           # Animal skins & flint knives...
           token = env['rack.request.cookie_hash']['cyclid.token']
-          User.get(username: username, token: token)
+          Models::User.get(username: username, token: token)
         end
 
         config.scope_defaults :default,
@@ -57,7 +57,7 @@ module Cyclid
           # There are no Helpers in Wardentown
           token = request.cookies['cyclid.token']
 
-          user = User.get(username: username, token: token)
+          user = Models::User.get(username: username, token: token)
 
           user.nil? ? fail!('invalid user') : success!(user)
         end
@@ -78,6 +78,7 @@ module Cyclid
       # Register the other routes
       use Controllers::Auth
       use Controllers::Organization
+      use Controllers::User
     end
   end
 end

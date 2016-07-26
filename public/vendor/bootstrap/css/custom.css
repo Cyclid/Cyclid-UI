@@ -1,61 +1,11 @@
-/* navbar */
-.navbar-layout,
-.navbar-layout {
-  border-radius: 0px;
-  background-color: #3c3c3b;
-}
-
-/* navbar "brand" */
-.navbar-layout a.navbar-brand {
-  /*color: #fe5000;*/
-  color: #f59d15;
-}
-.navbar-layout a.navbar-brand:hover {
-  color: #f59d15;
-}
-
-/* navbar links & dropdowns */
-.navbar-layout .navbar-nav>li>a {
-  /*color: #fe5000;*/
-  color: #f59d15;
-}
-.navbar-layout .navbar-nav>li>a:focus,
-.navbar-layout .navbar-nav>li>a:hover {
-  /*text-decoration: none;*/
-  text-decoration: underline;
-  background-color: #3c3c3b;
-  color: #f59d15;
-}
-
-.navbar-layout .navbar-nav>li>.dropdown-menu {
-  background-color: #3c3c3b;
-}
-.navbar-layout .navbar-nav > li.dropdown.open > a {
-  background-color: #6f6f6e;
-  color: #f59d15;
-}
-.navbar-layout .navbar-nav>li>.dropdown-menu a {
-  /*color: #fe5000;*/
-  color: #f59d15;
-}
-.navbar-layout .navbar-nav>li>.dropdown-menu a:hover {
-  color: #f59d15;
-  background-color: #6f6f6e;
-}
-
-/* navbar text */
-.navbar-layout .navbar-text {
-  /*color: #f59d15;*/
-  color: #8f8f8f;
-}
-
 /* sticky footer */
 html,
 body {
   height: 100%;
 }
 body {
-  background-color: lightgray;
+  min-height: 100%;
+  background-color: white;
 }
 
 #wrap {
@@ -73,17 +23,69 @@ body {
   background-color: #3c3c3b;
   padding: 5px;
 }
-
 #footer p {
   color: #8f8f8f;
 }
 
-#footer a {
-  /*color: #fe5000;*/
+/* brand all links */
+a {
+  color: #f59d15 !important;
+}
+
+a:focus,
+a:hover {
+  text-decoration: underline !important;
+  color: #f59d15 !important;
+}
+
+/* navbar */
+.navbar-layout {
+  border-radius: 0px;
+  background-color: #3c3c3b;
+  margin: 0px;
+}
+
+/* navbar links & dropdowns */
+.navbar-layout .navbar-nav>li>a:focus,
+.navbar-layout .navbar-nav>li>a:hover {
+  background-color: inherit;
+}
+
+.navbar-layout .navbar-nav>li>.dropdown-menu {
+  background-color: #3c3c3b;
+}
+.navbar-layout .navbar-nav>li.dropdown.open>a {
+  background-color: #6f6f6e;
   color: #f59d15;
 }
-#footer a:hover {
-  color: #f59d15;
+.navbar-layout .navbar-nav>li>.dropdown-menu a:hover {
+  background-color: #6f6f6e;
+}
+
+/* navbar text */
+.navbar-layout .navbar-text {
+  /*color: #f59d15;*/
+  color: #8f8f8f;
+}
+
+/* Breadcrumbs */
+.breadcrumb-layout {
+  border-radius: 0px;
+  background-color: #6f6f6e;
+}
+.breadcrumb-layout li.active {
+  color: black;
+}
+
+/* margin adjustment */
+.no-margin {
+  margin: 0px !important;
+}
+.no-margin-bottom {
+  margin-bottom: 0px !important;
+}
+.no-margin-top {
+  margin-top: 0px !important;
 }
 
 /* padded rows */
@@ -104,4 +106,84 @@ body {
 }
 .v-offset-30 {
   margin-top: 30px;
+}
+
+/* padding adjustment */
+.pad-2 {
+  padding: 2px;
+}
+.pad-3 {
+  padding: 3px;
+}
+.pad-4 {
+  padding: 4px;
+}
+.pad-5 {
+  padding: 5px;
+}
+.pad-7 {
+  padding: 7px;
+}
+.pad-10 {
+  padding: 10px;
+}
+.pad-20 {
+  padding: 20px;
+}
+.pad-30 {
+  padding: 30px;
+}
+
+/* Why does dl-horizontal want so much space? */
+.dl-horizontal dt {
+  width: 100px;
+}
+
+.dl-horizontal dd {
+    margin-left: 120px;
+}
+
+/* text */
+.text-normal {
+  color: black;
+}
+.text-initial-caps {
+  text-transform: capitalize;
+}
+
+/* */
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:hover {
+  background-color: whitesmoke;
+}
+
+/* Remove the border from tables */
+.no-border>thead>tr>th,
+.no-border>tbody>tr>th,
+.no-border>tfoot>tr>th,
+.no-border>thead>tr>td,
+.no-border>tbody>tr>td,
+.no-border>tfoot>tr>td {
+  border-top: none;
+  padding: 5px;
+}
+
+.hidden-row {
+  padding: 0px !important;
+  border: 0px !important;
+  background-color: white;
+}
+
+.job-table {
+  background-color: white;
+}
+
+.job-log {
+  background-color: black;
+  white-space: pre-wrap;
+  color: darkgray;
+  min-height: 150px;
 }

@@ -31,13 +31,10 @@ module Cyclid
             halt_with_401
           end
 
-          # At this point the user has autenticated successfully; get the user
+          # At this point the user has authenticated successfully; get the user
           # information; the User model will cache it automatically.
-          # XXX We need someway to do this with an authenticated API request;
-          # either HTTP Basic (as we have the username & password in this
-          # method) or the JWT.
-          user_data = User.get(username: username, password: password).to_hash
-          STDERR.puts user_data
+          user = Models::User.get(username: username, password: password)
+          STDERR.puts user.to_hash
 
           # Store the username in the session
           session[:username] = username
@@ -49,10 +46,16 @@ module Cyclid
                               path: '/',
                               http_only: false) # Must be available for AJAX
 
-          # Return a "login success" page along with the JWT & CSRF as cookie
-          # data, so that they can be stored; the page should then do redirect
-          # to the main page
-          mustache :login_success, layout: false
+          # Pick the first organization from the users membership and
+          # redirect; if the user doesn't belong to any organizations,
+          # redirect them to their user page
+          initial_page = if user.organizations.empty?
+                           "/user/#{username}"
+                         else
+                           user.organizations.first
+                         end
+
+          redirect to initial_page
         end
 
         # Log out:
