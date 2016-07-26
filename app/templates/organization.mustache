@@ -9,31 +9,47 @@
     <div class="col-md-3">
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h3 class="panel-title text-initial-caps">{{organization}}</h3>
+          <h3 class="panel-title text-initial-caps">Search</h3>
         </div>
-        <div class="panel-body form-horizontal form-group">
-          <form>
+        <div class="panel-body form-horizontal form-group pad-5">
+          <small>
+            <form>
+              <div class="form-group">
+                <label for="search_name" class="col-sm-3 control-label">Name</label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control form-control-slim" id="search_name" placeholder="Name">
+                </div>
+              </div>
 
-            <label for="search_name" class="control-label">Name</label>
-            <input type="text" class="form-control" id="search_name" placeholder="Name">
+              <div class="form-group">
+                <label for="search_from" class="col-sm-3 control-label">From</label>
+                <div class="col-sm-9">
+                  <input type="datetime-local" class="form-control form-control-slim" id="search_from">
+                </div>
+              </div>
 
-            <label for="search_started" class="control-label">Started</label>
-            <input type="datetime-local" class="form-control" id="search_started">
+              <div class="form-group">
+                <label for="search_to" class="col-sm-3 control-label">To</label>
+                <div class="col-sm-9">
+                  <input type="datetime-local" class="form-control form-control-slim" id="search_to">
+                </div>
+              </div>
 
-            <label for="search_ended" class="control-label">Ended</label>
-            <input type="datetime-local" class="form-control" id="search_ended">
-
-            <label for="search_status" class="control-label">Status</label>
-            <select class="form-control" id="search_status">
-              <option>Any</option>
-              <option>New</option>
-              <option>Started</option>
-              <option>Running</option>
-              <option>Succeeded</option>
-              <option>Failed</option>
-            </select>
-
-          </form>
+              <div class="form-group">
+                <label for="search_status" class="col-sm-3 control-label">Status</label>
+                <div class="col-sm-9">
+                  <select class="form-control form-control-slim" id="search_status">
+                    <option>Any</option>
+                    <option>New</option>
+                    <option>Started</option>
+                    <option>Running</option>
+                    <option>Succeeded</option>
+                    <option>Failed</option>
+                  </select>
+                </div>
+              </div>
+            </form>
+          </small>
         </div>
 
         <div class="panel-footer">
