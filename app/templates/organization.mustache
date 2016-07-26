@@ -11,9 +11,38 @@
         <div class="panel-heading">
           <h3 class="panel-title text-initial-caps">{{organization}}</h3>
         </div>
-        <div>
-          Some stuff
+        <div class="panel-body form-horizontal form-group">
+          <form>
+
+            <label for="search_name" class="control-label">Name</label>
+            <input type="text" class="form-control" id="search_name" placeholder="Name">
+
+            <label for="search_started" class="control-label">Started</label>
+            <input type="datetime-local" class="form-control" id="search_started">
+
+            <label for="search_ended" class="control-label">Ended</label>
+            <input type="datetime-local" class="form-control" id="search_ended">
+
+            <label for="search_status" class="control-label">Status</label>
+            <select class="form-control" id="search_status">
+              <option>Any</option>
+              <option>New</option>
+              <option>Started</option>
+              <option>Running</option>
+              <option>Succeeded</option>
+              <option>Failed</option>
+            </select>
+
+          </form>
         </div>
+
+        <div class="panel-footer">
+           <div class="text-right">
+            <button type="button" class="btn btn-default" id="search_btn_clear">Clear</button>
+            <button type="button" class="btn btn-default" id="search_btn_search">Search</button>
+          </div>
+        </div>
+
       </div>
     </div>
 
