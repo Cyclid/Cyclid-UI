@@ -192,6 +192,15 @@ function org_apply_indicator_update(job, active, idx) {
 function org_watch_job_list() {
   // Get the current total number of jobs
   var url = `${gblOrganizationURL}/jobs?stats_only=true`;
+
+  // Apply any search terms
+  var search = window.search;
+  if( ! $.isEmptyObject(search) ){
+    for( var s in search ){
+      url += `&${s}=${search[s]}`;
+    }
+  }
+
   api_get(url, gblUsername, org_apply_updates, org_job_list_failed);
 
   // Check the status of any current jobs
