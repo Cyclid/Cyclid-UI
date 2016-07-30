@@ -127,7 +127,7 @@ function org_load_chunk(start) {
   if( offset == 0){
     limit = gblOffset;
   }
-  console.log(`offset=${offset} limit=${limit}`);
+  console.log(`offset=${offset} limit=${limit} gblOffset=${gblOffset}`);
 
   // Remember the current offset
   gblOffset = offset;
@@ -136,6 +136,16 @@ function org_load_chunk(start) {
   org_update_counter(gblTotal, gblOffset);
 
   var url = `${gblOrganizationURL}/jobs?limit=${limit}&offset=${offset}`;
+
+  // Apply any search terms
+  var search = window.search;
+  if( ! $.isEmptyObject(search) ){
+    for( var s in search ){
+      url += `&${s}=${search[s]}`;
+    }
+  }
+  console.log(`chunk url=${url}`);
+
   api_get(url, gblUsername, function(jobs) { org_update_job_list(jobs, true); }, org_job_list_failed);
 }
 
@@ -182,6 +192,15 @@ function org_apply_indicator_update(job, active, idx) {
 function org_watch_job_list() {
   // Get the current total number of jobs
   var url = `${gblOrganizationURL}/jobs?stats_only=true`;
+
+  // Apply any search terms
+  var search = window.search;
+  if( ! $.isEmptyObject(search) ){
+    for( var s in search ){
+      url += `&${s}=${search[s]}`;
+    }
+  }
+
   api_get(url, gblUsername, org_apply_updates, org_job_list_failed);
 
   // Check the status of any current jobs
@@ -205,10 +224,122 @@ function org_initialize_job_list(stats) {
   console.log(stats);
 
   gblTotal = stats.total;
+  gblOffset = gblTotal;
 
   // Load the first set of jobs
   org_load_chunk(gblTotal, 100);
 
   // Watch for any new jobs
   addNamedInterval('job_list', org_watch_job_list, 3000);
+}
+
+function org_clear_job_list() {
+  // Close any open job views
+  $('.collapse.in').collapse('hide');
+
+  // Remove any timers
+  clearAllNamedIntervals();
+
+  // Clear the active jobs list
+  window.active_jobs = [];
+
+  // Hide the "Load more" button if it's visible
+  $('#org-load-more').addClass('hidden');
+
+  // Clear the job list
+  $('#job-accordian tbody').empty();
+
+  // Reset job counts
+  gblTotal = 0;
+  gblOffset = 0;
+
+  // Reset the "x of y loaded" counter
+  org_update_counter(gblTotal, gblOffset);
+}
+
+function org_search_form_get() {
+  var name = $('#search_name').val();
+  var from = $('#search_from').val();
+  var to = $('#search_to').val();
+  var status = $('#search_status').val();
+
+  console.log(`name=${name} from=${from} to=${to} status=${status}`);
+
+  var search = {};
+  if( name != '' )
+    search['s_name'] = name;
+  if( from != '' )
+    search['s_from'] = new Date(from).toISOString();
+  if( to != '' )
+    search['s_to'] = new Date(to).toISOString();
+  if( status != 'Any' )
+    search['s_status'] = status;
+
+  return search;
+}
+
+function org_search_submit() {
+  var search = org_search_form_get();
+  console.log(`search=${search}`);
+
+  if( ! $.isEmptyObject(search) ){
+    // Remember the search terms that are being used
+    window.search = search;
+
+    // Reset the job list
+    org_clear_job_list();
+
+    // Find the number of jobs & load the initial set
+    var url = `${gblOrganizationURL}/jobs?stats_only=true`;
+
+    for( var s in search ){
+      url += `&${s}=${search[s]}`;
+    }
+    console.log(`search url=${url}`);
+
+    // Load the intial set of jobs
+    api_get(url, gblUsername, org_initialize_job_list, org_job_list_failed);
+  }
+}
+
+function org_search_form_reset() {
+  var search = window.search;
+  console.log(`search=${search}`);
+
+  // Don't do anything if the form is already clear
+  if( ! $.isEmptyObject(search) ){
+    $('#search_name').val('');
+    $('#search_from').val('');
+    $('#search_to').val('');
+    $('#search_status').val('Any');
+
+    $('#search_btn_clear').prop('disabled', true);
+    $('#search_btn_search').prop('disabled', true);
+
+    // Clear any saved search terms
+    window.search = {};
+
+    // Reset the job list
+    org_clear_job_list();
+
+    // Load the jobs from the start
+    var url = `${gblOrganizationURL}/jobs?stats_only=true`;
+    api_get(url, gblUsername, org_initialize_job_list, org_job_list_failed);
+  }
+}
+
+function org_search_form_changed() {
+  var search = org_search_form_get();
+  console.log(`search=${search}`);
+
+  // Enable or disable the Search & Clear buttons
+  if( $.isEmptyObject(search) ){
+    console.log('disabling');
+    $('#search_btn_clear').prop('disabled', true);
+    $('#search_btn_search').prop('disabled', true);
+  } else {
+    console.log('enabling');
+    $('#search_btn_clear').prop('disabled', false);
+    $('#search_btn_search').prop('disabled', false);
+  }
 }

@@ -187,3 +187,7 @@ a:hover {
   color: darkgray;
   min-height: 150px;
 }
+
+.form-control-slim {
+  height: 24px;
+}

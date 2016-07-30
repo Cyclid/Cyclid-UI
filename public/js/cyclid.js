@@ -22,3 +22,11 @@ function removeNamedInterval(name) {
   }
   window.timers[name] = null;
 }
+
+// Remove all named intervals previously created with addNamedInterval
+function clearAllNamedIntervals() {
+  for(var timer in window.timers){
+    console.log(`removing ${timer}`);
+    removeNamedInterval(timer);
+  }
+}
