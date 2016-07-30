@@ -136,6 +136,16 @@ function org_load_chunk(start) {
   org_update_counter(gblTotal, gblOffset);
 
   var url = `${gblOrganizationURL}/jobs?limit=${limit}&offset=${offset}`;
+
+  // Apply any search terms
+  var search = window.search;
+  if( ! $.isEmptyObject(search) ){
+    for( var s in search ){
+      url += `&${s}=${search[s]}`;
+    }
+  }
+  console.log(`chunk url=${url}`);
+
   api_get(url, gblUsername, function(jobs) { org_update_job_list(jobs, true); }, org_job_list_failed);
 }
 
@@ -211,4 +221,100 @@ function org_initialize_job_list(stats) {
 
   // Watch for any new jobs
   addNamedInterval('job_list', org_watch_job_list, 3000);
+}
+
+function org_clear_job_list() {
+  // Close any open job views
+  $('.collapse.in').collapse('hide');
+
+  // Remove any timers
+  clearAllNamedIntervals();
+
+  // Clear the active jobs list
+  window.active_jobs = [];
+
+  // Hide the "Load more" button if it's visible
+  $('#org-load-more').addClass('hidden');
+
+  // Clear the job list
+  $('#job-accordian tbody').empty();
+
+  // Reset job counts
+  gblTotal = 0;
+  gblOffset = 0;
+
+  // Reset the "x of y loaded" counter
+  org_update_counter(gblTotal, gblOffset);
+}
+
+function org_search_form_get() {
+  var name = $('#search_name').val();
+  var from = $('#search_from').val();
+  var to = $('#search_to').val();
+  var status = $('#search_status').val();
+
+  console.log(`name=${name} from=${from} to=${to} status=${status}`);
+
+  var search = {};
+  if( name != '' )
+    search['name'] = name;
+  if( from != '' )
+    search['from'] = from;
+  if( to != '' )
+    search['to'] = to;
+  if( status != 'Any' )
+    search['status'] = status;
+
+  return search;
+}
+
+function org_search_submit() {
+  var search = org_search_form_get();
+
+  console.log(`search=${search}`);
+
+  if( ! $.isEmptyObject(search) ){
+    // Remember the search terms that are being used
+    window.search = search;
+
+    // Reset the job list
+    org_clear_job_list();
+
+    // Find the number of jobs & load the initial set
+    var url = `${gblOrganizationURL}/jobs?stats_only=true`;
+
+    for( var s in search ){
+      url += `&${s}=${search[s]}`;
+    }
+    console.log(`search url=${url}`);
+
+    // Load the intial set of jobs
+    api_get(url, gblUsername, org_initialize_job_list, org_job_list_failed);
+  }
+}
+
+function org_search_form_reset() {
+  var search = org_search_form_get();
+
+  console.log(`search=${search}`);
+
+  // Don't do anything if the form is already clear
+  // XXX: We could save some trouble by just disabling the "clear" button
+  // until it changes?
+  if( ! $.isEmptyObject(search) ){
+    $('#search_name').val('');
+    $('#search_from').val('');
+    $('#search_to').val('');
+    $('#search_status').val('Any');
+
+    // Clear any saved search terms
+    window.search = {};
+
+    // Reset the job list
+    org_clear_job_list();
+
+    // Load the jobs from the start
+    var url = `${gblOrganizationURL}/jobs?stats_only=true`;
+    api_get(url, gblUsername, org_initialize_job_list, org_job_list_failed);
+  }
 }
