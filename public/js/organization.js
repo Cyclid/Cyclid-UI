@@ -280,7 +280,6 @@ function org_search_form_get() {
 
 function org_search_submit() {
   var search = org_search_form_get();
-
   console.log(`search=${search}`);
 
   if( ! $.isEmptyObject(search) ){
@@ -305,17 +304,17 @@ function org_search_submit() {
 
 function org_search_form_reset() {
   var search = window.search;
-
   console.log(`search=${search}`);
 
   // Don't do anything if the form is already clear
-  // XXX: We could save some trouble by just disabling the "clear" button
-  // until it changes?
   if( ! $.isEmptyObject(search) ){
     $('#search_name').val('');
     $('#search_from').val('');
     $('#search_to').val('');
     $('#search_status').val('Any');
+
+    $('#search_btn_clear').prop('disabled', true);
+    $('#search_btn_search').prop('disabled', true);
 
     // Clear any saved search terms
     window.search = {};
@@ -326,5 +325,21 @@ function org_search_form_reset() {
     // Load the jobs from the start
     var url = `${gblOrganizationURL}/jobs?stats_only=true`;
     api_get(url, gblUsername, org_initialize_job_list, org_job_list_failed);
+  }
+}
+
+function org_search_form_changed() {
+  var search = org_search_form_get();
+  console.log(`search=${search}`);
+
+  // Enable or disable the Search & Clear buttons
+  if( $.isEmptyObject(search) ){
+    console.log('disabling');
+    $('#search_btn_clear').prop('disabled', true);
+    $('#search_btn_search').prop('disabled', true);
+  } else {
+    console.log('enabling');
+    $('#search_btn_clear').prop('disabled', false);
+    $('#search_btn_search').prop('disabled', false);
   }
 }
