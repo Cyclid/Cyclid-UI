@@ -127,7 +127,7 @@ function org_load_chunk(start) {
   if( offset == 0){
     limit = gblOffset;
   }
-  console.log(`offset=${offset} limit=${limit}`);
+  console.log(`offset=${offset} limit=${limit} gblOffset=${gblOffset}`);
 
   // Remember the current offset
   gblOffset = offset;
@@ -215,6 +215,7 @@ function org_initialize_job_list(stats) {
   console.log(stats);
 
   gblTotal = stats.total;
+  gblOffset = gblTotal;
 
   // Load the first set of jobs
   org_load_chunk(gblTotal, 100);
@@ -257,13 +258,13 @@ function org_search_form_get() {
 
   var search = {};
   if( name != '' )
-    search['name'] = name;
+    search['s_name'] = name;
   if( from != '' )
-    search['from'] = from;
+    search['s_from'] = new Date(from).toISOString();
   if( to != '' )
-    search['to'] = to;
+    search['s_to'] = new Date(to).toISOString();
   if( status != 'Any' )
-    search['status'] = status;
+    search['s_status'] = status;
 
   return search;
 }
@@ -294,7 +295,7 @@ function org_search_submit() {
 }
 
 function org_search_form_reset() {
-  var search = org_search_form_get();
+  var search = window.search;
 
   console.log(`search=${search}`);
 
