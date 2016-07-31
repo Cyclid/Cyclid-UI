@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Copyright 2016 Liqwyd Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -53,7 +54,7 @@ module Cyclid
                         user_fetch(args)
                       end
 
-          self.new(user_data)
+          new(user_data)
         end
 
         def self.user_fetch(args)

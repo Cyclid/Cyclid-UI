@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Modified from https://gist.github.com/mralex/956592
 #
 # Original licensed under MIT: https://github.com/gioext/sinatra-memcache
@@ -13,27 +14,25 @@ module Cyclid
         @expiry = args[:expiry] || 3600
       end
 
-      def cache(key, &block)
+      def cache(key)
         begin
           output = memcached.get(key)
         rescue Memcached::NotFound
-          output = block.call
+          output = yield
           memcached.set(key, output, @expiry)
         end
         output
       end
-      
+
       def expire(key)
-        begin
-          memcached.delete key
-          true
-        rescue Memcached::NotFound
-          false
-        end
+        memcached.delete key
+        true
+      rescue Memcached::NotFound
+        false
       end
-  
+
       private
-  
+
       def memcached
         @client ||= Memcached.new(@server)
       end

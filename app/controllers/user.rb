@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Copyright 2016 Liqwyd Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,8 +24,8 @@ module Cyclid
           username = params[:username]
 
           @crumbs = []
-          @crumbs << {'name' => 'User'}
-          @crumbs << {'url' => "/user/#{username}", 'name' => username}
+          @crumbs << { 'name' => 'User' }
+          @crumbs << { 'url' => "/user/#{username}", 'name' => username }
 
           @api_url = 'http://localhost:8092'
           @user_url = "#{@api_url}/users/#{params[:username]}"

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Copyright 2016 Liqwyd Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -56,7 +57,7 @@ module Cyclid
           # Return the JWT cookie to the client as a cookie
           response.set_cookie('cyclid.token',
                               value: token_data['token'],
-                              expires: Time.now + 21600000,   # +6 hours
+                              expires: Time.now + 21_600_000, # +6 hours
                               path: '/',
                               http_only: false) # Must be available for AJAX
 

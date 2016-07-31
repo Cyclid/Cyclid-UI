@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Copyright 2016 Liqwyd Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -52,7 +53,7 @@ module Cyclid
       configure do
         set sessions: true,
             secure: production?,
-            expire_after: 31557600,
+            expire_after: 31_557_600,
             secret: ENV['SESSION_SECRET']
       end
 
@@ -84,7 +85,7 @@ module Cyclid
 
       Warden::Strategies.add(:session) do
         def valid?
-          session.has_key? :username
+          session.key? :username
         end
 
         def authenticate!

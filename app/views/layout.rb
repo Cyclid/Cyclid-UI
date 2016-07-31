@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Copyright 2016 Liqwyd Ltd.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,32 +15,36 @@
 
 require 'digest/md5'
 
-module Cyclid; module UI; module Views
-class Layout < Mustache
-  attr_reader :organization, :api_url, :linkback_url
+module Cyclid
+  module UI
+    module Views
+      class Layout < Mustache
+        attr_reader :organization, :api_url, :linkback_url
 
-  def username
-    @current_user.username || 'Nobody'
-  end
+        def username
+          @current_user.username || 'Nobody'
+        end
 
-  def organizations
-    @current_user.organizations
-  end
+        def organizations
+          @current_user.organizations
+        end
 
-  def title
-    @title || 'Cyclid'
-  end
+        def title
+          @title || 'Cyclid'
+        end
 
-  # Return an array of elements to be inserted into the breadcrumb
-  def breadcrumbs
-    @crumbs.to_json
-  end
+        # Return an array of elements to be inserted into the breadcrumb
+        def breadcrumbs
+          @crumbs.to_json
+        end
 
-  # Calculate the base Gravatar URL for the user
-  def gravatar_url
-    email = @current_user.email.downcase.strip
-    hash = Digest::MD5.hexdigest(email)
-    "https://www.gravatar.com/avatar/#{hash}?d=identicon&r=g"
+        # Calculate the base Gravatar URL for the user
+        def gravatar_url
+          email = @current_user.email.downcase.strip
+          hash = Digest::MD5.hexdigest(email)
+          "https://www.gravatar.com/avatar/#{hash}?d=identicon&r=g"
+        end
+      end
+    end
   end
 end
-end; end; end

@@ -1,4 +1,5 @@
 # encoding: utf-8
+# frozen_string_literal: true
 
 begin
   require 'bundler/setup'
@@ -16,11 +17,11 @@ end
 
 ENV['CYCLID_MANAGE_CONFIG'] = File.join(%w(config development))
 
-task :rackup => :memcached do
+task rackup: :memcached do
   system 'rackup'
 end
 
-task :guard => :memcached do
+task guard: :memcached do
   system 'guard'
 end
 
