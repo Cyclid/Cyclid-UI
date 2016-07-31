@@ -25,16 +25,16 @@ module Cyclid
                                          username: username,
                                          password: password)
             token_data = client.token_get(username)
-            STDERR.puts "got #{token_data}"
+            Cyclid.logger.debug "got #{token_data}"
           rescue Exception => ex
-            STDERR.puts "failed to get a token: #{ex}"
+            Cyclid.logger.fatal "failed to get a token: #{ex}"
             halt_with_401
           end
 
           # At this point the user has authenticated successfully; get the user
           # information; the User model will cache it automatically.
           user = Models::User.get(username: username, password: password)
-          STDERR.puts user.to_hash
+          Cyclid.logger.debug "user=#{user.to_hash}"
 
           # Store the username in the session
           session[:username] = username

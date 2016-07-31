@@ -1,8 +1,10 @@
 require 'require_all'
+require 'logger'
 require 'warden'
 require 'memcached'
 require 'sinatra/flash'
 
+require_rel 'app/config'
 require_rel 'app/memcache'
 require_rel 'app/helpers'
 
@@ -10,6 +12,25 @@ require_all 'app/models'
 require_all 'app/controllers'
 
 require_rel 'app/views/layout'
+
+module Cyclid
+  class << self
+    attr_accessor :config, :logger
+
+    config_path = ENV['CYCLID_MANAGE_CONFIG'] || File.join(%w(/ etc cyclid manage))
+    Cyclid.config = UI::Config.new(config_path)
+
+    begin
+      Cyclid.logger = if Cyclid.config.log.casecmp('stderr').zero?
+                        Logger.new(STDERR)
+                      else
+                        Logger.new(Cyclid.config.log)
+                      end
+    rescue StandardError => ex
+      abort "Failed to initialize: #{ex}"
+    end
+  end
+end
 
 module Cyclid
   module UI

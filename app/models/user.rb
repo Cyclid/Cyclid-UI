@@ -27,9 +27,15 @@ module Cyclid
         # and valid.
         def self.get(args)
           username = args[:username] || args['username']
-          memcache = Memcache.new(server: 'localhost:11211')
+          memcache = Memcache.new(server: Cyclid.config.memcached)
 
-          user_data = memcache.cache username do
+          user_data = begin
+                        memcache.cache username do
+                          user_fetch(args)
+                        end
+                      rescue Memcached::ServerIsMarkedDead => ex
+                        Cyclid.logger.fatal "cannot connect to memcached: #{ex}"
+                        # Fall back to a direct API connection
                         user_fetch(args)
                       end
 
@@ -52,9 +58,9 @@ module Cyclid
                                          password: password,
                                          token: token)
             user_data = client.user_get(username)
-            STDERR.puts "got #{user_data}"
+            Cyclid.logger.debug "got #{user_data}"
           rescue Exception => ex
-            STDERR.puts "failed to get user details: #{ex}"
+            Cyclid.logger.fatal "failed to get user details: #{ex}"
             raise ex
           end
 
