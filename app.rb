@@ -33,7 +33,7 @@ module Cyclid
   class << self
     attr_accessor :config, :logger
 
-    config_path = ENV['CYCLID_MANAGE_CONFIG'] || File.join(%w(/ etc cyclid manage))
+    config_path = ENV['CYCLID_CONFIG'] || File.join(%w(/ etc cyclid config))
     Cyclid.config = UI::Config.new(config_path)
 
     begin

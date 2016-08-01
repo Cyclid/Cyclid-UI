@@ -26,14 +26,15 @@ module Cyclid
         # Try to load the configuration file. If it can't be loaded, we'll
         # fall back to defaults
         begin
-          @config = YAML.load_file(path)
+          config = YAML.load_file(path)
+          manage = config['manage']
         rescue Errno::ENOENT
-          @config = {}
+          manage = {}
         end
 
-        @memcached = @config['memcached'] || 'localhost:11211'
-        @log = @config['log'] || File.join(%w(/ var log cyclid))
-        @api = URI(@config['api']) || URI('localhost:8092')
+        @memcached = manage['memcached'] || 'localhost:11211'
+        @log = manage['log'] || File.join(%w(/ var log cyclid manage))
+        @api = URI(manage['api']) || URI('localhost:8092')
       rescue StandardError => ex
         abort "Failed to load configuration file #{path}: #{ex}"
       end

@@ -1,2 +1,3 @@
-log: stderr
-api: http://localhost:8092
+manage:
+  log: stderr
+  api: http://localhost:8092

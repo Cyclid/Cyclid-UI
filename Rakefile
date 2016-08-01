@@ -15,7 +15,7 @@ rescue LoadError
   end
 end
 
-ENV['CYCLID_MANAGE_CONFIG'] = File.join(%w(config development))
+ENV['CYCLID_CONFIG'] = File.join(%w(config development))
 
 task rackup: :memcached do
   system 'rackup'
