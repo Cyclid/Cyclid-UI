@@ -16,6 +16,7 @@
 module Cyclid
   module UI
     module Controllers
+      # Sinatra controller for user related endpoints
       class User < Base
         get '/user/:username' do
           authenticate!

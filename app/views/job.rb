@@ -16,6 +16,7 @@
 module Cyclid
   module UI
     module Views
+      # Job view
       class Job < Layout
         attr_reader :job_url, :job_id
       end

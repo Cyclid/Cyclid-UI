@@ -18,6 +18,8 @@ require 'digest/md5'
 module Cyclid
   module UI
     module Views
+      # Main Layout view; everything common to the Views which use Layouts can
+      # be found here
       class Layout < Mustache
         attr_reader :organization, :api_url, :linkback_url
 

@@ -15,6 +15,7 @@
 
 module Cyclid
   module UI
+    # Various helper methods for Sinatra controllers
     module Helpers
       # Raw CSRF token
       def csrf_token(rack_env)

@@ -16,6 +16,9 @@
 module Cyclid
   module UI
     module Models
+      # A User object. This is really no more than a simple wrapper around the
+      # Cyclid user data that is returned from the API, with the added layer
+      # of Memecached caching of the object to avoid API calls.
       class User
         attr_reader :username, :email, :organizations, :id
 
@@ -66,15 +69,16 @@ module Cyclid
 
           user_data = nil
           begin
+            Cyclid.logger.debug "api=#{Cyclid.config.api.inspect}"
             client = Client::Tilapia.new(auth: auth_method,
-                                         server: 'localhost',
-                                         port: 8092,
+                                         server: Cyclid.config.api.host,
+                                         port: Cyclid.config.api.port,
                                          username: username,
                                          password: password,
                                          token: token)
             user_data = client.user_get(username)
             Cyclid.logger.debug "got #{user_data}"
-          rescue Exception => ex
+          rescue StandardError => ex
             Cyclid.logger.fatal "failed to get user details: #{ex}"
             raise ex
           end

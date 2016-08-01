@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# CSRF view for forms which POST back to this server. This is not currently
+# used.
 class SomeCSRFForm < Mustache
   def csrf_tag
     # @env is a local, passed as:

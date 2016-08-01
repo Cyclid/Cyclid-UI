@@ -28,6 +28,7 @@ require_all 'app/controllers'
 
 require_rel 'app/views/layout'
 
+# Namespace for all Cyclid UI related code
 module Cyclid
   class << self
     attr_accessor :config, :logger
@@ -49,6 +50,7 @@ end
 
 module Cyclid
   module UI
+    # Sinatra application
     class App < Sinatra::Application
       configure do
         set sessions: true,

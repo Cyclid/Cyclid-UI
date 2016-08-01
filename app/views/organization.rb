@@ -14,8 +14,9 @@
 # limitations under the License.
 
 module Cyclid
-  module UI;
+  module UI
     module Views
+      # Organization view
       class Organization < Layout
         attr_reader :organization_url
       end

@@ -6,6 +6,10 @@ require 'memcached'
 
 module Cyclid
   module UI
+    # Simple Memcache caching layer on top of the Memcached client. Keys are
+    # retrieved or set via. the cache method; if the key exists it is returned,
+    # if the key does not exist the given block is called and its output is
+    # stored in Memcached.
     class Memcache
       attr_reader :client, :server, :expiry
 

@@ -22,6 +22,7 @@ require 'mustache/sinatra'
 module Cyclid
   module UI
     module Controllers
+      # Base class for all Sinatra controllers
       class Base < Sinatra::Base
         register Mustache::Sinatra
 

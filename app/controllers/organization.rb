@@ -16,6 +16,7 @@
 module Cyclid
   module UI
     module Controllers
+      # Controller for Organization related endpoints (including Jobs)
       class Organization < Base
         get '/:name' do
           authenticate!

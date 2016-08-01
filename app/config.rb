@@ -14,12 +14,13 @@
 # limitations under the License.
 
 require 'yaml'
+require 'uri'
 
 module Cyclid
   module UI
     # Cyclid UI configuration
     class Config
-      attr_reader :memcached, :log
+      attr_reader :memcached, :log, :api
 
       def initialize(path)
         # Try to load the configuration file. If it can't be loaded, we'll
@@ -32,6 +33,7 @@ module Cyclid
 
         @memcached = @config['memcached'] || 'localhost:11211'
         @log = @config['log'] || File.join(%w(/ var log cyclid))
+        @api = URI(@config['api']) || URI('localhost:8092')
       rescue StandardError => ex
         abort "Failed to load configuration file #{path}: #{ex}"
       end

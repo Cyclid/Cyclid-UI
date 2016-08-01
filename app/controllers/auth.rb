@@ -19,6 +19,7 @@ require 'cyclid/client'
 module Cyclid
   module UI
     module Controllers
+      # Controller for authentication related endpoints
       class Auth < Base
         get '/login' do
           @message = flash[:login_error]
@@ -35,13 +36,13 @@ module Cyclid
           begin
             client = Client::Tilapia.new(auth: Client::AUTH_BASIC,
                                          log_level: Logger::DEBUG,
-                                         server: 'localhost',
-                                         port: 8092,
+                                         server: Cyclid.config.api.host,
+                                         port: Cyclid.config.api.port,
                                          username: username,
                                          password: password)
             token_data = client.token_get(username)
             Cyclid.logger.debug "got #{token_data}"
-          rescue Exception => ex
+          rescue StandardError => ex
             Cyclid.logger.fatal "failed to get a token: #{ex}"
             halt_with_401
           end
@@ -81,7 +82,7 @@ module Cyclid
         get '/logout' do
           authenticate!
 
-          memcache = Memcache.new(server: 'localhost:11211')
+          memcache = Memcache.new(server: Cyclid.config.memcached)
           memcache.expire(current_user.username)
 
           warden.logout
