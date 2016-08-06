@@ -5,6 +5,11 @@ begin
   require 'bundler/setup'
 end
 
+ENV['CYCLID_CONFIG'] = File.join(%w(config development))
+
+require 'rspec/core/rake_task'
+RSpec::Core::RakeTask.new(:spec)
+
 begin
   require 'rubocop/rake_task'
 
@@ -15,7 +20,13 @@ rescue LoadError
   end
 end
 
-ENV['CYCLID_CONFIG'] = File.join(%w(config development))
+begin
+  require 'yard'
+rescue LoadError
+  task :yard do
+    abort 'YARD is not available.'
+  end
+end
 
 task rackup: :memcached do
   system 'rackup'
