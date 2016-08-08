@@ -30,7 +30,7 @@ module Cyclid
           @organization = name
           @linkback_url = "/#{name}"
 
-          api_server = 'http://localhost:8092'
+          api_server = Cyclid.config.api
           @organization_url = "#{api_server}/organizations/#{params[:name]}"
           @current_user = current_user
 
@@ -51,7 +51,7 @@ module Cyclid
           @organization = name
           @linkback_url = "/#{name}"
 
-          api_server = 'http://localhost:8092'
+          api_server = Cyclid.config.api
           @job_url = "#{api_server}/organizations/#{params[:name]}/jobs/#{params[:id]}"
           @job_id = id
           @current_user = current_user

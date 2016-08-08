@@ -28,7 +28,7 @@ module Cyclid
           @crumbs << { 'name' => 'User' }
           @crumbs << { 'url' => "/user/#{username}", 'name' => username }
 
-          @api_url = 'http://localhost:8092'
+          @api_url = Cyclid.config.api
           @user_url = "#{@api_url}/users/#{params[:username]}"
           @current_user = current_user
 

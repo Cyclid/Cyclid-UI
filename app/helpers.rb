@@ -35,9 +35,10 @@ module Cyclid
 
       # Return a pre-configured Tilapia client instance
       def client
+        api_url = Cyclid.client.api
         @tilapia ||= Client::Tilapia.new(auth: Client::AUTH_TOKEN,
-                                         server: 'localhost',
-                                         port: 8092,
+                                         server: api.host,
+                                         port: api.port,
                                          username: current_user.username,
                                          token: current_token)
       end
