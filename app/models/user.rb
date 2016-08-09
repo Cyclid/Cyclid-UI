@@ -22,7 +22,7 @@ module Cyclid
       class User
         attr_reader :username, :email, :organizations, :id
 
-        def initialize(args)
+        def initialize(args = {})
           @username = args['username'] || nil
           @email = args['email'] || nil
           @organizations = args['organizations'] || []
