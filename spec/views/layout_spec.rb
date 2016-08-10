@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Cyclid::UI::Views::Layout do
   let :user do
-    u = double('current_user')
+    u = double('user')
     allow(u).to receive(:username).and_return('test')
     allow(u).to receive(:email).and_return('test@example.com')
     allow(u).to receive(:organizations).and_return(['a','b'])
