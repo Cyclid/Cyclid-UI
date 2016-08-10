@@ -4,6 +4,10 @@ require 'simplecov'
 SimpleCov.start do
   add_filter '/spec/'
   add_filter '/public/'
+
+  add_group 'Controllers', 'app/controllers'
+  add_group 'Views', 'app/views'
+  add_group 'Models', 'app/models'
 end
 
 # Configure RSpec
