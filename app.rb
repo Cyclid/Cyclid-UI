@@ -26,7 +26,7 @@ require_rel 'app/helpers'
 require_all 'app/models'
 require_all 'app/controllers'
 
-require_rel 'app/views/layout'
+require_all 'app/views'
 
 # Namespace for all Cyclid UI related code
 module Cyclid
