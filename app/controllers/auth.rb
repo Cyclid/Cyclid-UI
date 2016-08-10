@@ -83,7 +83,12 @@ module Cyclid
           authenticate!
 
           memcache = Memcache.new(server: Cyclid.config.memcached)
-          memcache.expire(current_user.username)
+          begin
+            memcache.expire(current_user.username)
+          rescue Memcached::ServerIsMarkedDead => ex
+            Cyclid.logger.fatal "cannot connect to memcached: #{ex}"
+            # If Memcache is down there is nothing to expire
+          end
 
           warden.logout
           cookies.delete 'cyclid.token'
