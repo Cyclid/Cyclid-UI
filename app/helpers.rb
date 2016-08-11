@@ -32,16 +32,6 @@ module Cyclid
         flash[:login_error] = 'Invalid username or password'
         halt 401, flash.now[:login_error]
       end
-
-      # Return a pre-configured Tilapia client instance
-      def client
-        api_url = Cyclid.client.api
-        @tilapia ||= Client::Tilapia.new(auth: Client::AUTH_TOKEN,
-                                         server: api.host,
-                                         port: api.port,
-                                         username: current_user.username,
-                                         token: current_token)
-      end
     end
 
     # Sinatra Warden AuthN/AuthZ helpers
@@ -59,14 +49,6 @@ module Cyclid
       # Current User object from the session
       def current_user
         warden.user
-      end
-
-      # Current API token from the cookie
-      def current_token
-        token = cookies['cyclid.token']
-
-        halt_with_401 if token.nil?
-        token
       end
     end
   end
