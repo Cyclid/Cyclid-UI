@@ -1,3 +1,0 @@
-manage:
-  log: stderr
-  api: http://localhost:8092
