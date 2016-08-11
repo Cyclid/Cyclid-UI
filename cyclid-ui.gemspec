@@ -6,6 +6,7 @@ Gem::Specification.new do |s|
   s.summary     = 'Cyclid CI user interface'
   s.description = 'The Cyclid CI system'
   s.authors     = ['Kristian Van Der Vliet']
+  s.homepage    = 'https://cyclid.io'
   s.email       = 'contact@cyclid.io'
   s.files       = Dir.glob('app/**/*') + %w(LICENSE README.md)
 
