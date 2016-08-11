@@ -17,16 +17,24 @@ describe Cyclid::UI::Controllers::User do
 
   before :each do
     allow(klass).to receive(:get).and_return(user)
+
+    cfg = instance_double(Cyclid::UI::Config)
+    allow(cfg).to receive_message_chain('api.inspect').and_return('mocked object')
+    allow(cfg).to receive_message_chain('api.host').and_return('example.com')
+    allow(cfg).to receive_message_chain('api.port').and_return(9999)
+    allow(cfg).to receive_message_chain('memcached').and_return('example.com:4242')
+    allow(Cyclid).to receive(:config).and_return(cfg)
   end
 
   before :all do
     clear_cookies
   end
 
-  describe '#/user/:username' do
+  describe '#get /user/:username' do
     it 'requires authentication' do
       get '/user/test'
       expect(last_response.status).to eq(302)
+      expect(last_response['Location']).to eq 'http://example.org/login'
     end
 
     it 'return a valid user' do
