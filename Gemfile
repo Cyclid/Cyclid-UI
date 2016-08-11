@@ -18,4 +18,5 @@ group :development, :test do
   gem 'rack-test'
   gem 'yard'
   gem 'webmock'
+  gem 'rubygems-tasks'
 end

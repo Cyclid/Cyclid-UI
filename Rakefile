@@ -10,6 +10,9 @@ ENV['CYCLID_CONFIG'] = File.join(%w(config development))
 require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new(:spec)
 
+require 'rubygems/tasks'
+Gem::Tasks.new
+
 begin
   require 'rubocop/rake_task'
 
