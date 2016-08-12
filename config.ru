@@ -5,7 +5,6 @@
 #
 # Authors: Kristian Van Der Vliet <vanders@liqwyd.com>
 require 'sinatra'
-require 'rack/csrf'
 
 require 'cyclid-ui/app'
 

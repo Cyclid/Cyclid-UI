@@ -18,6 +18,7 @@ require 'logger'
 require 'warden'
 require 'memcached'
 require 'sinatra/flash'
+require 'rack/csrf'
 
 require_rel 'cyclid-ui/config'
 require_rel 'cyclid-ui/memcache'
