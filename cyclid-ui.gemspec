@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.authors     = ['Kristian Van Der Vliet']
   s.homepage    = 'https://cyclid.io'
   s.email       = 'contact@cyclid.io'
-  s.files       = Dir.glob('app/**/*') + Dir.glob('lib/**/*') + %w(LICENSE README.md)
+  s.files       = Dir.glob('app/**/*') + Dir.glob('lib/**/*') + Dir.glob('public/**/*') + %w(LICENSE README.md)
 
   s.add_runtime_dependency('require_all', '~> 1.3')
   s.add_runtime_dependency('sinatra', '~> 1.4')
