@@ -19,14 +19,14 @@ require 'warden'
 require 'memcached'
 require 'sinatra/flash'
 
-require_rel 'app/config'
-require_rel 'app/memcache'
-require_rel 'app/helpers'
+require_rel 'cyclid-ui/config'
+require_rel 'cyclid-ui/memcache'
+require_rel 'cyclid-ui/helpers'
 
-require_all 'app/models'
-require_all 'app/controllers'
+require_rel 'cyclid-ui/models'
+require_rel 'cyclid-ui/controllers'
 
-require_all 'app/views'
+require_rel 'cyclid-ui/views'
 
 # Namespace for all Cyclid UI related code
 module Cyclid

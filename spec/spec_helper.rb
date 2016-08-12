@@ -27,4 +27,4 @@ end
 require 'sinatra'
 require 'rack/csrf'
 
-require_relative '../app'
+require_relative '../app/cyclid-ui'

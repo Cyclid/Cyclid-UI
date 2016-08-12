@@ -7,7 +7,7 @@
 require 'sinatra'
 require 'rack/csrf'
 
-require File.dirname(__FILE__) + '/app'
+require 'cyclid-ui/app'
 
 configure :production do
   map '/' do
