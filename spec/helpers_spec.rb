@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+# rubocop:disable Metrics/LineLength
 require 'spec_helper'
 
 describe Cyclid::UI::Helpers do
