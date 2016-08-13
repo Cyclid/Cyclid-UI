@@ -20,9 +20,9 @@ describe Cyclid::UI::Controllers::Organization do
     allow(klass).to receive(:get).and_return(user)
 
     cfg = instance_double(Cyclid::UI::Config)
-    allow(cfg).to receive_message_chain('api.inspect').and_return('mocked object')
-    allow(cfg).to receive_message_chain('api.host').and_return('example.com')
-    allow(cfg).to receive_message_chain('api.port').and_return(9999)
+    allow(cfg).to receive_message_chain('client_api.inspect').and_return('mocked object')
+    allow(cfg).to receive_message_chain('client_api.host').and_return('example.com')
+    allow(cfg).to receive_message_chain('client_api.port').and_return(9999)
     allow(cfg).to receive_message_chain('memcached').and_return('example.com:4242')
     allow(Cyclid).to receive(:config).and_return(cfg)
   end

@@ -34,10 +34,11 @@ module Cyclid
           # successful, it will return a JWT that can be used to authenticate
           # future requests
           begin
+            Cyclid.logger.debug "api=#{Cyclid.config.server_api}"
             client = Client::Tilapia.new(auth: Client::AUTH_BASIC,
                                          log_level: Logger::DEBUG,
-                                         server: Cyclid.config.api.host,
-                                         port: Cyclid.config.api.port,
+                                         server: Cyclid.config.server_api.host,
+                                         port: Cyclid.config.server_api.port,
                                          username: username,
                                          password: password)
             token_data = client.token_get(username)

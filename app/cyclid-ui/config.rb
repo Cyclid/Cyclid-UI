@@ -20,7 +20,7 @@ module Cyclid
   module UI
     # Cyclid UI configuration
     class Config
-      attr_reader :memcached, :log, :api
+      attr_reader :memcached, :log, :server_api, :client_api
 
       def initialize(path)
         # Try to load the configuration file. If it can't be loaded, we'll
@@ -34,7 +34,33 @@ module Cyclid
 
         @memcached = manage['memcached'] || 'localhost:11211'
         @log = manage['log'] || File.join(%w(/ var log cyclid manage))
-        @api = URI(manage['api']) || URI('localhost:8092')
+
+        # The api setting is flexible; the URL that the server uses to connect
+        # to the API, and the URL that the client uses, can be diferent. This
+        # may happen if E.g. the UI & API are running on the same machine but
+        # with the ports NAT'd from the outside so that the client sees port
+        # 8123 but the local port is 123, or where the API is behind a load
+        # balancer and you may wish to avoid the round-trip out and back in.
+        #
+        # If "api" is a string then it is used for both the server & client URL
+        # If "api" is an array then we select the client & server URLs
+        # separately
+        api = URI(manage['api'])
+        if api.is_a? String
+          STDERR.puts "api is a String: #{api}"
+          @server_api = api
+          @client_api = api
+        elsif api.is_a? Hash
+          STDERR.puts "api is a Hash: #{api}"
+          @server_api = api['server']
+          @client_api = api['client']
+        else
+          STDERR.puts 'api is not set'
+          api = URI('http://localhost:8361')
+          @server_api = api
+          @client_api = api
+        end
+
       rescue StandardError => ex
         abort "Failed to load configuration file #{path}: #{ex}"
       end

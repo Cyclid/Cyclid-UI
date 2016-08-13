@@ -69,10 +69,10 @@ module Cyclid
 
           user_data = nil
           begin
-            Cyclid.logger.debug "api=#{Cyclid.config.api.inspect}"
+            Cyclid.logger.debug "api=#{Cyclid.config.server_api.inspect}"
             client = Client::Tilapia.new(auth: auth_method,
-                                         server: Cyclid.config.api.host,
-                                         port: Cyclid.config.api.port,
+                                         server: Cyclid.config.server_api.host,
+                                         port: Cyclid.config.server_api.port,
                                          username: username,
                                          password: password,
                                          token: token)

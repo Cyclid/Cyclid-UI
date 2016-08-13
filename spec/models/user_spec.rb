@@ -122,9 +122,9 @@ describe Cyclid::UI::Models::User do
         allow(klass).to receive(:new).and_return(client)
 
         cfg = instance_double(Cyclid::UI::Config)
-        allow(cfg).to receive_message_chain('api.inspect').and_return('mocked object')
-        allow(cfg).to receive_message_chain('api.host').and_return('example.com')
-        allow(cfg).to receive_message_chain('api.port').and_return(9999)
+        allow(cfg).to receive_message_chain('server_api.inspect').and_return('mocked object')
+        allow(cfg).to receive_message_chain('server_api.host').and_return('example.com')
+        allow(cfg).to receive_message_chain('server_api.port').and_return(9999)
         allow(Cyclid).to receive(:config).and_return(cfg)
       end
 
