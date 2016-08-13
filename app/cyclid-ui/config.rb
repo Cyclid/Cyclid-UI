@@ -29,6 +29,8 @@ module Cyclid
           config = YAML.load_file(path)
           manage = config['manage']
         rescue Errno::ENOENT
+          # Cyclid.logger wont exist, yet
+          STDERR.puts "Config file #{path} not found: using defaults"
           manage = {}
         end
 
@@ -46,17 +48,13 @@ module Cyclid
         # If "api" is an array then we select the client & server URLs
         # separately
         api = manage['api']
-        STDERR.puts "api=#{api}"
         if api.is_a? String
-          STDERR.puts "api is a String: #{api}"
           @server_api = URI(api)
           @client_api = URI(api)
         elsif api.is_a? Hash
-          STDERR.puts "api is a Hash: #{api}"
           @server_api = URI(api['server'])
           @client_api = URI(api['client'])
         else
-          STDERR.puts 'api is not set'
           api = URI('http://localhost:8361')
           @server_api = api
           @client_api = api
