@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'bundler/setup'
 require 'simplecov'
 
@@ -27,4 +28,4 @@ end
 require 'sinatra'
 require 'rack/csrf'
 
-require_relative '../app/cyclid-ui'
+require_relative '../app/cyclid_ui'

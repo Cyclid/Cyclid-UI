@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'spec_helper'
 
 describe Cyclid::UI::Memcache do
@@ -12,7 +13,7 @@ describe Cyclid::UI::Memcache do
   describe '#initialize' do
     context 'with a default expiry time' do
       it 'creates a new memcache' do
-        args = {server: 'example.com' }
+        args = { server: 'example.com' }
 
         allow(klass).to receive(:new).with(args[:server]).and_return(memcache)
 
@@ -26,7 +27,7 @@ describe Cyclid::UI::Memcache do
 
     context 'with a non-default expiry time' do
       it 'creates a new memcache' do
-        args = {server: 'example.com', expiry: 9999 }
+        args = { server: 'example.com', expiry: 9999 }
 
         allow(klass).to receive(:new).with(args[:server]).and_return(memcache)
 

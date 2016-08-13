@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'spec_helper'
 
 describe Cyclid::UI::Views::Layout do
@@ -5,7 +6,7 @@ describe Cyclid::UI::Views::Layout do
     u = double('user')
     allow(u).to receive(:username).and_return('test')
     allow(u).to receive(:email).and_return('test@example.com')
-    allow(u).to receive(:organizations).and_return(['a','b'])
+    allow(u).to receive(:organizations).and_return(%w(a b))
     return u
   end
 
@@ -34,7 +35,7 @@ describe Cyclid::UI::Views::Layout do
 
   describe '#organizations' do
     it 'returns the users organizations' do
-      expect(subject.organizations).to eq ['a','b']
+      expect(subject.organizations).to eq %w(a b)
     end
   end
 
@@ -55,7 +56,7 @@ describe Cyclid::UI::Views::Layout do
 
   describe '#breadcrumbs' do
     it 'returns the breadcrumbs as JSON' do
-      subject.instance_variable_set(:@crumbs, {foo: 'bar'})
+      subject.instance_variable_set(:@crumbs, foo: 'bar')
       expect(subject.breadcrumbs).to eq('{"foo":"bar"}')
     end
   end

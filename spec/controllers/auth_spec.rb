@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'spec_helper'
 
 describe Cyclid::UI::Controllers::Auth do
@@ -7,7 +8,7 @@ describe Cyclid::UI::Controllers::Auth do
     u = double('user')
     allow(u).to receive(:username).and_return('test')
     allow(u).to receive(:email).and_return('test@example.com')
-    allow(u).to receive(:organizations).and_return(['a','b'])
+    allow(u).to receive(:organizations).and_return(%w(a b))
     allow(u).to receive(:to_hash).and_return('mocked object')
     return u
   end
@@ -50,7 +51,7 @@ describe Cyclid::UI::Controllers::Auth do
                                              username: 'test',
                                              password: 'password').and_raise(StandardError)
 
-        post '/login', {username: 'test', password: 'password'}
+        post '/login', username: 'test', password: 'password'
         expect(last_response.status).to eq(302)
       end
     end
@@ -69,7 +70,7 @@ describe Cyclid::UI::Controllers::Auth do
 
           allow(model).to receive(:get).and_return(user)
 
-          post '/login', {username: 'test', password: 'password'}
+          post '/login', username: 'test', password: 'password'
           expect(last_response.status).to eq(302)
           # Expect to be redirected back to the first organization; in the case
           # of the mocked user, that is 'a'. The mocked config sets the URL to
@@ -93,14 +94,13 @@ describe Cyclid::UI::Controllers::Auth do
 
           allow(user).to receive(:organizations).and_return([])
 
-          post '/login', {username: 'test', password: 'password'}
+          post '/login', username: 'test', password: 'password'
           expect(last_response.status).to eq(302)
           # Expect to be redirected to the users profile. The mocked config
           # sets the URL to 'example.com', hence http://example.com/user/test
           expect(last_response['Location']).to eq 'http://example.org/user/test'
         end
       end
-
     end
   end
 
@@ -137,7 +137,7 @@ describe Cyclid::UI::Controllers::Auth do
         allow(klass).to receive(:new).and_return(memcache)
         allow(memcache).to receive(:expire).and_return(true)
 
-        get '/logout', {}, {'rack.session' => {'username' => 'test'}}
+        get '/logout', {}, 'rack.session' => { 'username' => 'test' }
         expect(last_response.status).to eq(302)
         expect(last_response['Location']).to eq 'http://example.org/login'
       end
@@ -150,7 +150,7 @@ describe Cyclid::UI::Controllers::Auth do
         allow(klass).to receive(:new).and_return(memcache)
         allow(memcache).to receive(:expire).and_raise(Memcached::ServerIsMarkedDead)
 
-        get '/logout', {}, {'rack.session' => {'username' => 'test'}}
+        get '/logout', {}, 'rack.session' => { 'username' => 'test' }
         expect(last_response.status).to eq(302)
         expect(last_response['Location']).to eq 'http://example.org/login'
       end

@@ -1,11 +1,12 @@
+# frozen_string_literal: true
 require 'spec_helper'
 
 describe Cyclid::UI::Models::User do
   let :user do
-    {'username' => 'test',
-     'email' => 'test@example.com',
-     'organizations' => ['a', 'b'],
-     'id' => 99}
+    { 'username' => 'test',
+      'email' => 'test@example.com',
+      'organizations' => %w(a b),
+      'id' => 99 }
   end
 
   context 'with no arguments' do
@@ -22,10 +23,10 @@ describe Cyclid::UI::Models::User do
 
   context 'with arguments' do
     it 'creates a new instance' do
-      args = {'username' => 'test',
-              'email' => 'test@example.com',
-              'organizations' => ['a', 'b'],
-              'id' => 99}
+      args = { 'username' => 'test',
+               'email' => 'test@example.com',
+               'organizations' => %w(a b),
+               'id' => 99 }
 
       u = nil
       expect{ u = Cyclid::UI::Models::User.new(args) }.to_not raise_error
@@ -39,18 +40,18 @@ describe Cyclid::UI::Models::User do
 
   context 'instance methods' do
     let :args do
-      {'username' => 'test',
-       'email' => 'test@example.com',
-       'organizations' => ['a', 'b'],
-       'id' => 99}
+      { 'username' => 'test',
+        'email' => 'test@example.com',
+        'organizations' => %w(a b),
+        'id' => 99 }
     end
 
     subject { Cyclid::UI::Models::User.new(args) }
 
     describe '#to_hash' do
       it 'returns a valid hash' do
-        expect( subject.to_hash ).to be_an_instance_of(Hash)
-        expect( subject.to_hash ).to eq args
+        expect(subject.to_hash).to be_an_instance_of(Hash)
+        expect(subject.to_hash).to eq args
       end
     end
   end
@@ -129,15 +130,15 @@ describe Cyclid::UI::Models::User do
       end
 
       it 'uses HTTP Basic auth when no API token is given' do
-        args = {username: 'test',
-                password: 'password'}
+        args = { username: 'test',
+                 password: 'password' }
 
         expect(klass).to receive(:new).with(auth: Cyclid::Client::AUTH_BASIC,
-                                           server: 'example.com',
-                                           port: 9999,
-                                           username: args[:username],
-                                           password: args[:password],
-                                           token: nil).and_return(client)
+                                            server: 'example.com',
+                                            port: 9999,
+                                            username: args[:username],
+                                            password: args[:password],
+                                            token: nil).and_return(client)
 
         allow(client).to receive(:user_get).with(args[:username]).and_return(user)
 
@@ -148,15 +149,15 @@ describe Cyclid::UI::Models::User do
       end
 
       it 'uses API Token auth when an token is given' do
-        args = {username: 'test',
-                token: 'token'}
+        args = { username: 'test',
+                 token: 'token' }
 
         expect(klass).to receive(:new).with(auth: Cyclid::Client::AUTH_TOKEN,
-                                           server: 'example.com',
-                                           port: 9999,
-                                           username: args[:username],
-                                           password: nil,
-                                           token: args[:token]).and_return(client)
+                                            server: 'example.com',
+                                            port: 9999,
+                                            username: args[:username],
+                                            password: nil,
+                                            token: args[:token]).and_return(client)
 
         allow(client).to receive(:user_get).with(args[:username]).and_return(user)
 
@@ -167,15 +168,15 @@ describe Cyclid::UI::Models::User do
       end
 
       it 'fails gracefully when the API call fails' do
-        args = {username: 'test',
-                token: 'token'}
+        args = { username: 'test',
+                 token: 'token' }
 
         expect(klass).to receive(:new).with(auth: Cyclid::Client::AUTH_TOKEN,
-                                           server: 'example.com',
-                                           port: 9999,
-                                           username: args[:username],
-                                           password: nil,
-                                           token: args[:token]).and_return(client)
+                                            server: 'example.com',
+                                            port: 9999,
+                                            username: args[:username],
+                                            password: nil,
+                                            token: args[:token]).and_return(client)
 
         allow(client).to receive(:user_get).with(args[:username]).and_raise(StandardError)
 

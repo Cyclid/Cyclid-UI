@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'spec_helper'
 
 describe Cyclid::UI::Controllers::Organization do
@@ -7,7 +8,7 @@ describe Cyclid::UI::Controllers::Organization do
     u = double('user')
     allow(u).to receive(:username).and_return('test')
     allow(u).to receive(:email).and_return('test@example.com')
-    allow(u).to receive(:organizations).and_return(['a','b'])
+    allow(u).to receive(:organizations).and_return(%w(a b))
     allow(u).to receive(:to_hash).and_return('mocked object')
     return u
   end
@@ -37,7 +38,7 @@ describe Cyclid::UI::Controllers::Organization do
     it 'returns an organization page' do
       set_cookie 'cyclid.token=token'
 
-      get '/test', {}, {'rack.session' => {'username' => 'test'}}
+      get '/test', {}, 'rack.session' => { 'username' => 'test' }
       expect(last_response.status).to eq(200)
     end
   end
@@ -52,7 +53,7 @@ describe Cyclid::UI::Controllers::Organization do
     it 'returns a job page' do
       set_cookie 'cyclid.token=token'
 
-      get '/test/job/9999', {}, {'rack.session' => {'username' => 'test'}}
+      get '/test/job/9999', {}, 'rack.session' => { 'username' => 'test' }
       expect(last_response.status).to eq(200)
     end
   end
