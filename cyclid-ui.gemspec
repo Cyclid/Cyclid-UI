@@ -28,4 +28,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency('mustache', '~> 1.0')
   s.add_runtime_dependency('mustache-sinatra', '~> 1.0')
   s.add_runtime_dependency('memcached', '~> 1.8')
+  s.add_runtime_dependency('cyclid-client', '~> 0.3')
 end
