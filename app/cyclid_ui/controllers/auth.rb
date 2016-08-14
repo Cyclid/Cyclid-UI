@@ -1,9 +1,25 @@
+# frozen_string_literal: true
+# Copyright 2016 Liqwyd Ltd.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 require 'json'
 require 'cyclid/client'
 
 module Cyclid
   module UI
     module Controllers
+      # Controller for authentication related endpoints
       class Auth < Base
         get '/login' do
           @message = flash[:login_error]
@@ -18,23 +34,24 @@ module Cyclid
           # successful, it will return a JWT that can be used to authenticate
           # future requests
           begin
+            Cyclid.logger.debug "api=#{Cyclid.config.server_api}"
             client = Client::Tilapia.new(auth: Client::AUTH_BASIC,
                                          log_level: Logger::DEBUG,
-                                         server: 'localhost',
-                                         port: 8092,
+                                         server: Cyclid.config.server_api.host,
+                                         port: Cyclid.config.server_api.port,
                                          username: username,
                                          password: password)
             token_data = client.token_get(username)
-            STDERR.puts "got #{token_data}"
-          rescue Exception => ex
-            STDERR.puts "failed to get a token: #{ex}"
+            Cyclid.logger.debug "got #{token_data}"
+          rescue StandardError => ex
+            Cyclid.logger.fatal "failed to get a token: #{ex}"
             halt_with_401
           end
 
           # At this point the user has authenticated successfully; get the user
           # information; the User model will cache it automatically.
           user = Models::User.get(username: username, password: password)
-          STDERR.puts user.to_hash
+          Cyclid.logger.debug "user=#{user.to_hash}"
 
           # Store the username in the session
           session[:username] = username
@@ -42,7 +59,7 @@ module Cyclid
           # Return the JWT cookie to the client as a cookie
           response.set_cookie('cyclid.token',
                               value: token_data['token'],
-                              expires: Time.now + 21600000,   # +6 hours
+                              expires: Time.now + 21_600_000, # +6 hours
                               path: '/',
                               http_only: false) # Must be available for AJAX
 
@@ -66,8 +83,13 @@ module Cyclid
         get '/logout' do
           authenticate!
 
-          memcache = Memcache.new(server: 'localhost:11211')
-          memcache.expire(current_user.username)
+          memcache = Memcache.new(server: Cyclid.config.memcached)
+          begin
+            memcache.expire(current_user.username)
+          rescue Memcached::ServerIsMarkedDead => ex
+            Cyclid.logger.fatal "cannot connect to memcached: #{ex}"
+            # If Memcache is down there is nothing to expire
+          end
 
           warden.logout
           cookies.delete 'cyclid.token'

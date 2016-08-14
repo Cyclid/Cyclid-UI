@@ -2,7 +2,7 @@
 function api_get(url, username, success, error) {
   $.ajax({
     type: 'GET',
-    url: url,
+    url: encodeURI(url),
     dataType: 'json',
     crossDomain: true,
     beforeSend: function(xhr) {
@@ -19,7 +19,7 @@ function api_get(url, username, success, error) {
 function api_put(url, data, username, success, error) {
   $.ajax({
     type: 'PUT',
-    url: url,
+    url: encodeURI(url),
     data: JSON.stringify(data),
     contentType: 'application/json',
     crossDomain: true,

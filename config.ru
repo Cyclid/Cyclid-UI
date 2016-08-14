@@ -1,12 +1,12 @@
 # encoding: utf-8
+# frozen_string_literal: true
 #
 # Copyright 2016 Liqwyd Ltd
 #
 # Authors: Kristian Van Der Vliet <vanders@liqwyd.com>
 require 'sinatra'
-require 'rack/csrf'
 
-require File.dirname(__FILE__) + '/app'
+require 'cyclid_ui/app'
 
 configure :production do
   map '/' do

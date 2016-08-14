@@ -1,23 +1,62 @@
+# frozen_string_literal: true
+# Copyright 2016 Liqwyd Ltd.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 require 'require_all'
+require 'logger'
 require 'warden'
 require 'memcached'
 require 'sinatra/flash'
+require 'rack/csrf'
 
-require_rel 'app/memcache'
-require_rel 'app/helpers'
+require_rel 'cyclid_ui/config'
+require_rel 'cyclid_ui/memcache'
+require_rel 'cyclid_ui/helpers'
 
-require_all 'app/models'
-require_all 'app/controllers'
+require_rel 'cyclid_ui/models'
+require_rel 'cyclid_ui/controllers'
 
-require_rel 'app/views/layout'
+require_rel 'cyclid_ui/views'
+
+# Namespace for all Cyclid UI related code
+module Cyclid
+  class << self
+    attr_accessor :config, :logger
+
+    config_path = ENV['CYCLID_CONFIG'] || File.join(%w(/ etc cyclid config))
+    Cyclid.config = UI::Config.new(config_path)
+
+    begin
+      Cyclid.logger = if Cyclid.config.log.casecmp('stderr').zero?
+                        Logger.new(STDERR)
+                      else
+                        Logger.new(Cyclid.config.log)
+                      end
+    rescue StandardError => ex
+      abort "Failed to initialize: #{ex}"
+    end
+  end
+end
 
 module Cyclid
   module UI
+    # Sinatra application
     class App < Sinatra::Application
       configure do
         set sessions: true,
             secure: production?,
-            expire_after: 31557600,
+            expire_after: 31_557_600,
             secret: ENV['SESSION_SECRET']
       end
 
@@ -49,7 +88,7 @@ module Cyclid
 
       Warden::Strategies.add(:session) do
         def valid?
-          session.has_key? :username
+          session.key? :username
         end
 
         def authenticate!

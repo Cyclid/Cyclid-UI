@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 Gem::Specification.new do |s|
   s.name        = 'cyclid-ui'
   s.version     = '0.1.0'
@@ -5,8 +6,15 @@ Gem::Specification.new do |s|
   s.summary     = 'Cyclid CI user interface'
   s.description = 'The Cyclid CI system'
   s.authors     = ['Kristian Van Der Vliet']
+  s.homepage    = 'https://cyclid.io'
   s.email       = 'contact@cyclid.io'
-  s.files       = Dir.glob('app/**/*') + %w(LICENSE README.md)
+  s.files       = Dir.glob('app/**/*') +
+                  Dir.glob('lib/**/*') +
+                  Dir.glob('public/**/*') +
+                  Dir.glob('bin/*') +
+                  %w(LICENSE README.md)
+  s.bindir      = 'bin'
+  s.executables << 'cyclid-ui-assets'
 
   s.add_runtime_dependency('require_all', '~> 1.3')
   s.add_runtime_dependency('sinatra', '~> 1.4')
@@ -19,4 +27,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency('mustache', '~> 1.0')
   s.add_runtime_dependency('mustache-sinatra', '~> 1.0')
   s.add_runtime_dependency('memcached', '~> 1.8')
+  s.add_runtime_dependency('cyclid-client', '~> 0.3')
 end
