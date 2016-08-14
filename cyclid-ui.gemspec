@@ -1,5 +1,4 @@
 # frozen_string_literal: true
-# rubocop:disable Metrics/LineLength
 Gem::Specification.new do |s|
   s.name        = 'cyclid-ui'
   s.version     = '0.1.0'
