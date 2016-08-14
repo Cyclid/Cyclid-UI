@@ -36,6 +36,7 @@ PATH
   specs:
     cyclid-ui (0.1.0)
       activerecord (~> 4.2)
+      cyclid-client (~> 0.3)
       memcached (~> 1.8)
       mustache (~> 1.0)
       mustache-sinatra (~> 1.0)
