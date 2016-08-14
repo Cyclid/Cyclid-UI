@@ -20,14 +20,14 @@ require 'memcached'
 require 'sinatra/flash'
 require 'rack/csrf'
 
-require_rel 'cyclid-ui/config'
-require_rel 'cyclid-ui/memcache'
-require_rel 'cyclid-ui/helpers'
+require_rel 'cyclid_ui/config'
+require_rel 'cyclid_ui/memcache'
+require_rel 'cyclid_ui/helpers'
 
-require_rel 'cyclid-ui/models'
-require_rel 'cyclid-ui/controllers'
+require_rel 'cyclid_ui/models'
+require_rel 'cyclid_ui/controllers'
 
-require_rel 'cyclid-ui/views'
+require_rel 'cyclid_ui/views'
 
 # Namespace for all Cyclid UI related code
 module Cyclid

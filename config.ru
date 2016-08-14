@@ -6,7 +6,7 @@
 # Authors: Kristian Van Der Vliet <vanders@liqwyd.com>
 require 'sinatra'
 
-require 'cyclid-ui/app'
+require 'cyclid_ui/app'
 
 configure :production do
   map '/' do
