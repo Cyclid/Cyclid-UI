@@ -49,6 +49,7 @@ module Cyclid
 
     # Healthchecks
     module Health
+      # Internal Memcache connection health check
       module Memcache
         # Check if Memcache is available
         def self.status
