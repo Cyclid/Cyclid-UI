@@ -28,6 +28,7 @@ module Cyclid
 
           # Add internal health checks
           @checker.systems[:memcache] = Cyclid::UI::Health::Memcache
+          @checker.systems[:api] = Cyclid::UI::Health::API
         end
 
         # Return either 200 (healthy) or 503 (unhealthy) based on the status of
@@ -65,6 +66,28 @@ module Cyclid
             SinatraHealthCheck::Status.new(:ok, 'memcache connection is okay')
           else
             SinatraHealthCheck::Status.new(:warning, 'memcache is not available')
+          end
+        end
+      end
+
+      # Internal API connection health check
+      module API
+        # Check if we can connect to the Cyclid API
+        def self.status
+          connected = begin
+                        client = Client::Tilapia.new(auth: Client::AUTH_NONE,
+                                                     log_level: Logger::DEBUG,
+                                                     server: Cyclid.config.server_api.host,
+                                                     port: Cyclid.config.server_api.port)
+                        client.health_ping
+                      rescue
+                        false
+                      end
+
+          if connected
+            SinatraHealthCheck::Status.new(:ok, 'API connection is okay')
+          else
+            SinatraHealthCheck::Status.new(:error, 'API is not available')
           end
         end
       end
