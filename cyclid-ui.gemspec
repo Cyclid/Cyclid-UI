@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency('warden', '~> 1.2')
   s.add_runtime_dependency('activerecord', '~> 4.2')
   s.add_runtime_dependency('sinatra-activerecord', '~> 2.0')
+  s.add_runtime_dependency('sinatra-health-check', '~> 0.2.0')
   s.add_runtime_dependency('sinatra-flash', '~> 0.3')
   s.add_runtime_dependency('mustache', '~> 1.0')
   s.add_runtime_dependency('mustache-sinatra', '~> 1.0')
