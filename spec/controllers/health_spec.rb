@@ -5,6 +5,18 @@ require 'json'
 describe 'a health check' do
   include Rack::Test::Methods
 
+  let :memcached do
+    dbl = double(Memcached)
+    allow(dbl).to receive(:stats).and_return true
+    dbl
+  end
+
+  let :client do
+    dbl = double(Cyclid::Client::Tilapia)
+    allow(dbl).to receive(:health_ping).and_return true
+    dbl
+  end
+
   context 'when the application is healthy' do
     before do
       allow_any_instance_of(SinatraHealthCheck::Checker).to receive(:healthy?).and_return true
@@ -12,6 +24,9 @@ describe 'a health check' do
 
     describe 'GET /health/status' do
       it 'returns a 200 response' do
+        allow(Memcached).to receive(:new).and_return memcached
+        allow(Cyclid::Client::Tilapia).to receive(:new).and_return client
+
         get '/health/status'
         expect(last_response.status).to eq(200)
       end
@@ -19,6 +34,9 @@ describe 'a health check' do
 
     describe 'GET /health/info' do
       it 'returns a JSON response' do
+        allow(Memcached).to receive(:new).and_return memcached
+        allow(Cyclid::Client::Tilapia).to receive(:new).and_return client
+
         get '/health/info'
         expect(last_response.status).to eq(200)
 
@@ -44,6 +62,7 @@ describe 'a health check' do
       it 'returns a JSON response' do
         dbl = double('memcache')
         allow(dbl).to receive(:stats).and_raise Memcached::SomeErrorsWereReported
+        allow(Cyclid::Client::Tilapia).to receive(:new).and_return client
 
         allow(Memcached).to receive(:new).and_return dbl
 
