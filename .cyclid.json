@@ -67,16 +67,6 @@
         ]
       },
       {
-        "name": "docs",
-        "steps": [
-          {
-            "action" : "command",
-            "cmd" : "bundle exec rake doc",
-            "path" : "%{workspace}/Cyclid-UI"
-          }
-        ]
-      },
-      {
         "name": "success",
         "steps": [
           {
@@ -111,11 +101,6 @@
       },
       {
         "stage" : "rspec",
-        "on_success" : "docs",
-        "on_failure" : "failure"
-      },
-      {
-        "stage" : "docs",
         "on_success" : "success",
         "on_failure" : "failure"
       }
