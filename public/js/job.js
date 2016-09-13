@@ -113,11 +113,11 @@ function ji_update_status(job) {
   var waiting = '<h6>Unknown</h6>';
   switch(job.status) {
     case 1:
-    case 2:
       waiting = '<h6><i class="fa fa-spinner fa-pulse"></i>&nbsp;Waiting for job to start...</h6>'
       $('#ji_job_waiting').html(waiting);
       $('#ji_job_waiting').removeClass('hidden');
       break;
+    case 2:
     case 3:
     case 4:
       waiting = '<h6><i class="fa fa-cog fa-spin"></i>&nbsp;Waiting for job to complete...</h6>';
