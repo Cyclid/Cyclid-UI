@@ -119,6 +119,7 @@ module Cyclid
       use Controllers::Organization
       use Controllers::User
       use Controllers::Health
+      use Controllers::Default
     end
   end
 end
