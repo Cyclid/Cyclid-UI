@@ -133,6 +133,13 @@ function ji_update_status(job) {
   // Update the status indicator, if there is one
   var indicator = ji_job_status_to_indicator(job.status);
   $(`#row${job.job_id} > #status`).html(indicator);
+
+  if (job.ended) {
+    // Update the duration, if there is one
+    var duration = ji_calculate_duration(job.started, job.ended);
+    console.log(`duration is ${duration}`)
+    $(`#row${job.job_id} > #duration`).text(duration);
+  }
 }
 
 // Set & show the job details
@@ -150,10 +157,10 @@ function ji_update_details(job) {
   if (job.ended) {
     var ended = new Date(job.ended);
     $('#ji_job_ended').text(ended.toUTCString());
-  }
 
-  var duration = ji_calculate_duration(job.started, job.ended);
-  $('#ji_job_duration').text(duration);
+    var duration = ji_calculate_duration(job.started, job.ended);
+    $('#ji_job_duration').text(duration);
+  }
 
   $('#ji_details').removeClass('hidden');
 }
