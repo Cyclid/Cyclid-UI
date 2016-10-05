@@ -1,7 +1,12 @@
 # frozen_string_literal: true
+lib = File.expand_path('../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+
+require 'cyclid_ui/version'
+
 Gem::Specification.new do |s|
   s.name        = 'cyclid-ui'
-  s.version     = '0.1.0'
+  s.version     = Cyclid::UI::VERSION
   s.licenses    = ['Apache-2.0']
   s.summary     = 'Cyclid CI user interface'
   s.description = 'The Cyclid CI system'
