@@ -113,11 +113,11 @@ function ji_update_status(job) {
   var waiting = '<h6>Unknown</h6>';
   switch(job.status) {
     case 1:
-    case 2:
       waiting = '<h6><i class="fa fa-spinner fa-pulse"></i>&nbsp;Waiting for job to start...</h6>'
       $('#ji_job_waiting').html(waiting);
       $('#ji_job_waiting').removeClass('hidden');
       break;
+    case 2:
     case 3:
     case 4:
       waiting = '<h6><i class="fa fa-cog fa-spin"></i>&nbsp;Waiting for job to complete...</h6>';
@@ -133,6 +133,13 @@ function ji_update_status(job) {
   // Update the status indicator, if there is one
   var indicator = ji_job_status_to_indicator(job.status);
   $(`#row${job.job_id} > #status`).html(indicator);
+
+  if (job.ended) {
+    // Update the duration, if there is one
+    var duration = ji_calculate_duration(job.started, job.ended);
+    console.log(`duration is ${duration}`)
+    $(`#row${job.job_id} > #duration`).text(duration);
+  }
 }
 
 // Set & show the job details
@@ -150,10 +157,10 @@ function ji_update_details(job) {
   if (job.ended) {
     var ended = new Date(job.ended);
     $('#ji_job_ended').text(ended.toUTCString());
-  }
 
-  var duration = ji_calculate_duration(job.started, job.ended);
-  $('#ji_job_duration').text(duration);
+    var duration = ji_calculate_duration(job.started, job.ended);
+    $('#ji_job_duration').text(duration);
+  }
 
   $('#ji_details').removeClass('hidden');
 }

@@ -20,11 +20,12 @@ module Cyclid
       # Cyclid user data that is returned from the API, with the added layer
       # of Memecached caching of the object to avoid API calls.
       class User
-        attr_reader :username, :email, :organizations, :id
+        attr_reader :username, :email, :name, :organizations, :id
 
         def initialize(args = {})
           @username = args['username'] || nil
           @email = args['email'] || nil
+          @name = args['name'] || nil
           @organizations = args['organizations'] || []
           @id = args['id'] || nil
         end
@@ -32,6 +33,7 @@ module Cyclid
         def to_hash
           { 'username' => @username,
             'email' => @email,
+            'name' => @name,
             'organizations' => @organizations,
             'id' => @id }
         end
