@@ -42,6 +42,7 @@ describe Cyclid::UI::Models::User do
     let :args do
       { 'username' => 'test',
         'email' => 'test@example.com',
+        'name' => nil,
         'organizations' => %w(a b),
         'id' => 99 }
     end
