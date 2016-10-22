@@ -58,6 +58,27 @@ module Cyclid
 
           mustache :job
         end
+
+        get '/:name/config' do
+          authenticate!
+
+          # Build breadcrumbs
+          name = params[:name]
+
+          @crumbs = []
+          @crumbs << { 'url' => "/#{name}", 'name' => name.capitalize }
+          @crumbs << { 'name' => "Plugin configuration" }
+
+          @organization = name
+          @linkback_url = "/#{name}"
+
+          api_server = Cyclid.config.client_api
+          @org_url = "#{api_server}/organizations/#{params[:name]}"
+          @current_user = current_user
+
+          mustache :config
+        end
+
       end
     end
   end
