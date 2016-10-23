@@ -139,16 +139,29 @@ function config_select(plugin_type, plugin_name) {
   api_get(url, gblUsername, config_update_plugin, config_get_failed);
 }
 
+function config_show_failure(failure_message){
+  $('#config_failure > #error_message').html(failure_message);
+  $('#config_failure').removeClass('hidden');
+}
+
 function config_get_failed(xhr) {
-  console.log("couldn't get config data");
+  var failure_message = `<p>
+                           <h2>Failed to retrieve configuration data</h2><br>
+                           <strong>${xhr.status}:</strong> ${xhr.responseText}
+                         </p>`
+  config_show_failure(failure_message);
+}
+
+function config_set_failed(xhr) {
+  var failure_message = `<p>
+                           <h2>Failed to save configuration data</h2><br>
+                           <strong>${xhr.status}:</strong> ${xhr.responseText}
+                         </p>`
+  config_show_failure(failure_message);
 }
 
 function config_set_success(xhr){
   $('#config_success_modal').modal();
-}
-
-function config_set_failed(xhr, status, error) {
-  console.log(`couldn't set config data: status=${status} error=${error} code=${JSON.stringify(xhr.statusCode())}`);
 }
 
 function config_update_list(data) {
