@@ -21,6 +21,7 @@ function api_put(url, data, username, success, error) {
     type: 'PUT',
     url: encodeURI(url),
     data: JSON.stringify(data),
+    dataType: 'text',
     contentType: 'application/json',
     crossDomain: true,
     beforeSend: function(xhr) {
