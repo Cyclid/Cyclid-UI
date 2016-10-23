@@ -18,7 +18,7 @@ module Cyclid
     module Views
       # Plugin config view
       class Config < Layout
-        attr_accessor :org_url
+        attr_reader :org_url
       end
     end
   end

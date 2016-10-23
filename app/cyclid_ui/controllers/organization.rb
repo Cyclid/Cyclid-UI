@@ -67,7 +67,7 @@ module Cyclid
 
           @crumbs = []
           @crumbs << { 'url' => "/#{name}", 'name' => name.capitalize }
-          @crumbs << { 'name' => "Plugin configuration" }
+          @crumbs << { 'name' => 'Configuration' }
 
           @organization = name
           @linkback_url = "/#{name}"
@@ -78,7 +78,6 @@ module Cyclid
 
           mustache :config
         end
-
       end
     end
   end
