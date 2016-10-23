@@ -33,7 +33,7 @@ function config_save(){
   var plugin_type = $('#config_form').data('plugin_type');
 
   var url = `${gblOrgUrl}/configs/${plugin_type}/${plugin_name}`;
-  api_put(url, config_data, gblUsername, null, config_set_failed);
+  api_put(url, config_data, gblUsername, config_set_success, config_set_failed);
 }
 
 /* Add a "string" schema element to the configuration data form */
@@ -123,7 +123,7 @@ function config_update_plugin(data) {
   }
 
   /* Add the "Save" button */
-  form.append('<input type="submit" class="btn btn-success" onclick="config_save()" value="Save">');
+  form.append('<input type="submit" class="btn btn-primary" onclick="config_save()" value="Save">');
 }
 
 function config_select(plugin_type, plugin_name) {
@@ -143,6 +143,10 @@ function config_get_failed(xhr) {
   console.log("couldn't get config data");
 }
 
+function config_set_success(xhr){
+  $('#config_success_modal').modal();
+}
+
 function config_set_failed(xhr, status, error) {
   console.log(`couldn't set config data: status=${status} error=${error} code=${JSON.stringify(xhr.statusCode())}`);
 }
@@ -159,4 +163,8 @@ function config_update_list(data) {
     var item = `<a href="#" class="list-group-item list-group-item-action" style="text-transform:capitalize;" onclick="config_select('${type}', '${name}')">${name}</a>`
     $('#plugin-list').append(item);
   }
+
+  // Select the first item in the list
+  plugin = data[0];
+  config_select(plugin.type, plugin.name);
 }
