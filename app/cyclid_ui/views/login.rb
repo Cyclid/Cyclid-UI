@@ -18,7 +18,11 @@ module Cyclid
     module Views
       # Login view. This is a non-Layout view.
       class Login < Mustache
-        attr_reader :message
+        attr_reader :message, :signup
+
+        def title
+          @title || 'Cyclid'
+        end
       end
     end
   end

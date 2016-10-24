@@ -32,6 +32,8 @@ module Cyclid
           @user_url = "#{@api_url}/users/#{params[:username]}"
           @current_user = current_user
 
+          @organization = current_user.organizations.first
+
           mustache :user
         end
       end
