@@ -23,6 +23,7 @@ module Cyclid
       class Auth < Base
         get '/login' do
           @message = flash[:login_error]
+          @signup = Cyclid.config.signup
           mustache :login, layout: false
         end
 
