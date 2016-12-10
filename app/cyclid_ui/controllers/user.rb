@@ -34,6 +34,8 @@ module Cyclid
 
           @organization = current_user.organizations.first
 
+          @signup = Cyclid.config.signup
+
           mustache :user
         end
       end

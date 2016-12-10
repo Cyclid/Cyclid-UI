@@ -18,7 +18,7 @@ module Cyclid
     module Views
       # User profile view
       class User < Layout
-        attr_reader :user_url
+        attr_reader :user_url, :signup
       end
     end
   end
