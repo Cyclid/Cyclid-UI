@@ -20,15 +20,15 @@
    "sources": [
       {
         "type": "git",
-        "url": "https://github.com/Liqwyd/Cyclid-UI"
+        "url": "https://github.com/Cyclid/Cyclid-UI"
       },
       {
         "type": "git",
-        "url": "https://github.com/Liqwyd/Cyclid-core"
+        "url": "https://github.com/Cyclid/Cyclid-core"
       },
       {
         "type": "git",
-        "url": "https://github.com/Liqwyd/Cyclid-client"
+        "url": "https://github.com/Cyclid/Cyclid-client"
       }
    ],
    "stages" : [
