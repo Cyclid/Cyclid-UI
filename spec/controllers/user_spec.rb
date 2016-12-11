@@ -26,7 +26,8 @@ describe Cyclid::UI::Controllers::User do
     allow(cfg).to receive_message_chain('client_api.inspect').and_return('mocked object')
     allow(cfg).to receive_message_chain('client_api.host').and_return('example.com')
     allow(cfg).to receive_message_chain('client_api.port').and_return(9999)
-    allow(cfg).to receive_message_chain('memcached').and_return('example.com:4242')
+    allow(cfg).to receive('memcached').and_return('example.com:4242')
+    allow(cfg).to receive('signup').and_return(nil)
     allow(Cyclid).to receive(:config).and_return(cfg)
   end
 

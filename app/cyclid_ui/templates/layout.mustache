@@ -47,6 +47,10 @@
                   {{#organizations}}
                   <li><a href="/{{.}}">{{.}}</a></li>
                   {{/organizations}}
+                  {{#signup}}
+                  <li role="separator" class="divider"></li>
+                  <li><a href="{{signup}}/organization" target="_blank">Create a new Organization</a></li>
+                  {{/signup}}
                 </ul>
               </li>
             </ul>

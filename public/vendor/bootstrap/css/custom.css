@@ -61,6 +61,9 @@ a:hover {
 .navbar-layout .navbar-nav>li>.dropdown-menu a:hover {
   background-color: #6f6f6e;
 }
+.navbar-layout .navbar-nav>li>.dropdown-menu>.divider {
+  background-color: #6f6f6e;
+}
 
 /* navbar text */
 .navbar-layout .navbar-text {
