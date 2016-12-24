@@ -54,7 +54,7 @@ module Cyclid
   module UI
     # Sinatra application
     class App < Sinatra::Application
-     use Rack::Deflater
+      use Rack::Deflater
       use Rack::Session::Cookie
       use Rack::Csrf, raise: true,
                       skip: ['POST:/login',
