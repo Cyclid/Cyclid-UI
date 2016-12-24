@@ -17,6 +17,7 @@ require 'require_all'
 require 'logger'
 require 'warden'
 require 'memcached'
+require 'sinatra/cross_origin'
 require 'sinatra/flash'
 require 'rack/csrf'
 
@@ -53,14 +54,7 @@ module Cyclid
   module UI
     # Sinatra application
     class App < Sinatra::Application
-      configure do
-        set sessions: true,
-            secure: production?,
-            expire_after: 31_557_600,
-            secret: ENV['SESSION_SECRET']
-      end
-
-      use Rack::Deflater
+     use Rack::Deflater
       use Rack::Session::Cookie
       use Rack::Csrf, raise: true,
                       skip: ['POST:/login',
@@ -68,7 +62,29 @@ module Cyclid
 
       helpers Helpers
 
+      register Sinatra::CrossOrigin
       register Sinatra::Flash
+
+      configure do
+        set sessions: true,
+            secure: production?,
+            expire_after: 31_557_600,
+            secret: ENV['SESSION_SECRET']
+        enable :cross_origin
+        set allow_origin: :any,
+            allow_methods: [:get, :put, :post, :options],
+            allow_credentials: true,
+            max_age: '1728000',
+            expose_headers: ['Content-Type']
+        disable :show_exceptions
+      end
+
+      options '*' do
+        response.headers['Allow'] = 'HEAD,GET,PUT,POST,DELETE,OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] =
+          'Content-Type, Cache-Control, Accept, Authorization'
+        200
+      end
 
       # Configure Warden to authenticate
       use Warden::Manager do |config|
