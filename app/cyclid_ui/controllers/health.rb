@@ -12,6 +12,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+require 'sinatra/cross_origin'
 require 'sinatra-health-check'
 require 'memcached'
 
@@ -21,6 +22,8 @@ module Cyclid
     module Controllers
       # Controller for all Health related API endpoints
       class Health < Base
+        register Sinatra::CrossOrigin
+
         def initialize(_app)
           super
           @checker = SinatraHealthCheck::Checker.new(logger: Cyclid.logger,
@@ -35,6 +38,7 @@ module Cyclid
         # the healthchecks. This is intended to be used by things like load
         # balancers and active monitors.
         get '/health/status' do
+          cross_origin
           @checker.healthy? ? 200 : 503
         end
 
@@ -43,6 +47,7 @@ module Cyclid
         # not suitable for general health checks unless the caller intends to
         # parse the message body for the health status.
         get '/health/info' do
+          cross_origin
           @checker.status.to_json
         end
       end
