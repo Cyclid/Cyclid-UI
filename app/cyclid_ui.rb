@@ -62,7 +62,6 @@ module Cyclid
 
       helpers Helpers
 
-      register Sinatra::CrossOrigin
       register Sinatra::Flash
 
       configure do
@@ -70,7 +69,6 @@ module Cyclid
             secure: production?,
             expire_after: 31_557_600,
             secret: ENV['SESSION_SECRET']
-        enable :cross_origin
         set allow_origin: :any,
             allow_methods: [:get, :put, :post, :options],
             allow_credentials: true,
