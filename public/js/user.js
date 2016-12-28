@@ -4,11 +4,20 @@ function user_show_error(msg){
 }
 
 function user_get_failed(xhr){
-  var failure_message = `Failed to retrieve user details<br>
-                         <strong>${xhr.status}:</strong> ${xhr.responseText}`;
-  failure_message = `Get failed: ${xhr.status}`;
+  // 401 Unauthorized means an obvious authentication issue, and the user
+  // should log in again. A status of 0 here means that an error occured
+  // during the AJAX request; possible a CORS issue. In that case we'll assume
+  // the worst (cyclid.token is invalid) and force re-authentication, too.
+  if(xhr.status == 401 || xhr.status == 0){
+    console.log(`Failed to retrieve job list: status was ${xhr.status}`);
+    window.location = '/login';
+  } else {
+    var failure_message = `Failed to retrieve user details<br>
+                           <strong>${xhr.status}:</strong> ${xhr.responseText}`;
+    failure_message = `Get failed: ${xhr.status}`;
 
-  user_show_error(failure_message);
+    user_show_error(failure_message);
+  }
 }
 
 function user_update_details(user){
