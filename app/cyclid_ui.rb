@@ -88,9 +88,13 @@ module Cyclid
       use Warden::Manager do |config|
         config.serialize_into_session(&:username)
         config.serialize_from_session do |username|
-          # Animal skins & flint knives...
-          token = env['rack.request.cookie_hash']['cyclid.token']
-          Models::User.get(username: username, token: token)
+          begin
+            # Animal skins & flint knives...
+            token = env['rack.request.cookie_hash']['cyclid.token']
+            Models::User.get(username: username, token: token)
+          rescue
+            nil
+          end
         end
 
         config.scope_defaults :default,
@@ -113,6 +117,8 @@ module Cyclid
           user = Models::User.get(username: username, token: token)
 
           user.nil? ? fail!('invalid user') : success!(user)
+        rescue
+          fail!('invalid user')
         end
       end
 
@@ -125,6 +131,7 @@ module Cyclid
         # it sees the 401 response
         env['warden'].custom_failure!
         flash[:login_error] = 'Invalid username or password'
+        cookies.delete 'cyclid.token'
         redirect to '/login'
       end
 

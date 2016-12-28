@@ -69,6 +69,9 @@ module Cyclid
 
           auth_method = token.nil? ? Client::AUTH_BASIC : Client::AUTH_TOKEN
 
+          # We must have one or the other
+          raise 'no password or token' if password.nil? and token.nil?
+
           user_data = nil
           begin
             Cyclid.logger.debug "api=#{Cyclid.config.server_api.inspect}"
