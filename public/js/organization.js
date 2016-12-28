@@ -70,13 +70,22 @@ function org_add_job(job, append) {
 }
 
 function org_job_list_failed(xhr) {
-  var failure_message = `Failed to retrieve job list<br>
-                         <strong>${xhr.status}:</strong> ${xhr.responseText}`;
+  // 401 Unauthorized means an obvious authentication issue, and the user
+  // should log in again. A status of 0 here means that an error occured
+  // during the AJAX request; possible a CORS issue. In that case we'll assume
+  // the worst (cyclid.token is invalid) and force re-authentication, too.
+  if(xhr.status == 401 || xhr.status == 0){
+    console.log(`Failed to retrieve job list: status was ${xhr.status}`);
+    window.location = '/login';
+  } else {
+    var failure_message = `Failed to retrieve job list<br>
+                           <strong>${xhr.status}:</strong> ${xhr.responseText}`;
 
-  failure_message = `List failed: ${xhr.status}`;
-  $('#organization_failure > #error_message').html(failure_message);
+    failure_message = `List failed: ${xhr.status}`;
+    $('#organization_failure > #error_message').html(failure_message);
 
-  $('#organization_failure').removeClass('hidden');
+    $('#organization_failure').removeClass('hidden');
+  }
 }
 
 function org_update_job_list(jobs, append) {

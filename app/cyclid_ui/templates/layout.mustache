@@ -48,17 +48,21 @@
                   <li><a href="/{{.}}">{{.}}</a></li>
                   {{/organizations}}
                   {{#signup}}
+                  {{#organization}}
                   <li role="separator" class="divider"></li>
+                  {{/organization}}
                   <li><a href="{{signup}}/organization" target="_blank">Create a new Organization</a></li>
                   {{/signup}}
                 </ul>
               </li>
             </ul>
 
+            {{#organization}}
             <ul class="nav navbar-nav">
               <li><a href="/{{organization}}">Jobs</a></li>
               <li><a href="/{{organization}}/config">Configuration</a></li>
             </ul>
+            {{/organization}}
 
             <ul class="nav navbar-nav navbar-right">
               <li class="dropdown">

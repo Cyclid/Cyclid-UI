@@ -173,13 +173,22 @@ function ji_update_all(job) {
 }
 
 function ji_get_failed(xhr) {
-  var failure_message = `<p>
-                           <h2>Failed to retrieve job</h2><br>
-                           <strong>${xhr.status}:</strong> ${xhr.responseText}
-                         </p>`
-  $('#ji_failure > #error_message').html(failure_message);
+  // 401 Unauthorized means an obvious authentication issue, and the user
+  // should log in again. A status of 0 here means that an error occured
+  // during the AJAX request; possible a CORS issue. In that case we'll assume
+  // the worst (cyclid.token is invalid) and force re-authentication, too.
+  if(xhr.status == 401 || xhr.status == 0){
+    console.log(`Failed to retrieve job list: status was ${xhr.status}`);
+    window.location = '/login';
+  } else {
+    var failure_message = `<p>
+                             <h2>Failed to retrieve job</h2><br>
+                             <strong>${xhr.status}:</strong> ${xhr.responseText}
+                           </p>`
+    $('#ji_failure > #error_message').html(failure_message);
 
-  $('#ji_failure').removeClass('hidden');
+    $('#ji_failure').removeClass('hidden');
+  }
 }
 
 function ji_update_status_and_check_completion(url, job) {
