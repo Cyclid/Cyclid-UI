@@ -51,8 +51,12 @@ module Cyclid
 
           # At this point the user has authenticated successfully; get the user
           # information; the User model will cache it automatically.
-          user = Models::User.get(username: username, password: password)
-          Cyclid.logger.debug "user=#{user.to_hash}"
+          begin
+            user = Models::User.get(username: username, password: password)
+            Cyclid.logger.debug "user=#{user.to_hash}"
+          rescue
+            halt_with_401
+          end
 
           # Store the username in the session
           session[:username] = username
