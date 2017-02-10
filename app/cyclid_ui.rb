@@ -55,10 +55,13 @@ module Cyclid
     # Sinatra application
     class App < Sinatra::Application
       use Rack::Deflater
-      use Rack::Session::Cookie
-      use Rack::Csrf, raise: true,
-                      skip: ['POST:/login',
-                             'POST:/unauthenticated']
+      use Rack::Session::Pool,
+          expire_after: 31_557_600,
+          secret: ENV['COOKIE_SECRET'] || '8f54749dcb0ae0843cdd9669b797d311'
+      use Rack::Csrf,
+          raise: true,
+          skip: ['POST:/login',
+                 'POST:/unauthenticated']
 
       helpers Helpers
 
@@ -67,8 +70,7 @@ module Cyclid
       configure do
         set sessions: true,
             secure: production?,
-            expire_after: 31_557_600,
-            secret: ENV['SESSION_SECRET']
+            session_secret: ENV['SESSION_SECRET']
         set allow_origin: :any,
             allow_methods: [:get, :put, :post, :options],
             allow_credentials: true,
