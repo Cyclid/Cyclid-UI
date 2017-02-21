@@ -71,7 +71,11 @@ module Cyclid
           # Pick the first organization from the users membership and
           # redirect; if the user doesn't belong to any organizations,
           # redirect them to their user page
-          initial_page = if user.organizations.empty?
+          request_uri = session[:request_uri]
+          Cyclid.logger.debug "request_uri=#{request_uri}"
+          initial_page = if request_uri
+                           request_uri
+                         elsif user.organizations.empty?
                            "/user/#{username}"
                          else
                            user.organizations.first

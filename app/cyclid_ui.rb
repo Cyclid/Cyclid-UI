@@ -133,6 +133,8 @@ module Cyclid
         # it sees the 401 response
         env['warden'].custom_failure!
         flash[:login_error] = 'Invalid username or password'
+        session[:request_uri] = env['REQUEST_URI'] \
+          unless session.key? :request_uri
         cookies.delete 'cyclid.token'
         redirect to '/login'
       end
