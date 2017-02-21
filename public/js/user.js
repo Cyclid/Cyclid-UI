@@ -44,7 +44,7 @@ function user_update_details(user){
         var config = `server: ${gblAPIURL}\n` +
                      `organization: ${org}\n` +
                      `username: ${user.username}\n` +
-                     `secret: `;  
+                     `secret: ${user.secret}\n`;
 
         console.log(`${org} was clicked: ${config}`);
 
