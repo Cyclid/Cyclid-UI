@@ -33,13 +33,16 @@ describe Cyclid::UI::Controllers::Auth do
       class_double(Cyclid::UI::Models::User).as_stubbed_const
     end
 
+    let :config do
+      instance_double(Cyclid::UI::Config)
+    end
+
     before :each do
-      cfg = instance_double(Cyclid::UI::Config)
-      allow(cfg).to receive_message_chain('server_api.inspect').and_return('mocked object')
-      allow(cfg).to receive_message_chain('server_api.host').and_return('example.com')
-      allow(cfg).to receive_message_chain('server_api.port').and_return(9999)
-      allow(cfg).to receive_message_chain('memcached').and_return('example.com:4242')
-      allow(Cyclid).to receive(:config).and_return(cfg)
+      allow(config).to receive_message_chain('server_api.inspect').and_return('mocked object')
+      allow(config).to receive_message_chain('server_api.host').and_return('example.com')
+      allow(config).to receive_message_chain('server_api.port').and_return(9999)
+      allow(config).to receive_message_chain('memcached').and_return('example.com:4242')
+      allow(Cyclid).to receive(:config).and_return(config)
     end
 
     context 'with an invalid username & password' do
@@ -80,25 +83,54 @@ describe Cyclid::UI::Controllers::Auth do
       end
 
       context 'when the user does not belong to any organizations' do
-        it 'authenticates the user' do
-          allow(tilapia).to receive(:new).with(auth: Cyclid::Client::AUTH_BASIC,
-                                               log_level: Logger::DEBUG,
-                                               server: 'example.com',
-                                               port: 9999,
-                                               username: 'test',
-                                               password: 'password').and_return(client)
+        context 'and signups are disabled' do
+          it 'redirects the user to their profile page' do
+            allow(tilapia).to receive(:new).with(auth: Cyclid::Client::AUTH_BASIC,
+                                                 log_level: Logger::DEBUG,
+                                                 server: 'example.com',
+                                                 port: 9999,
+                                                 username: 'test',
+                                                 password: 'password').and_return(client)
 
-          allow(client).to receive(:token_get).and_return('token')
+            allow(client).to receive(:token_get).and_return('token')
 
-          allow(model).to receive(:get).and_return(user)
+            allow(model).to receive(:get).and_return(user)
 
-          allow(user).to receive(:organizations).and_return([])
+            allow(user).to receive(:organizations).and_return([])
 
-          post '/login', username: 'test', password: 'password'
-          expect(last_response.status).to eq(302)
-          # Expect to be redirected to the users profile. The mocked config
-          # sets the URL to 'example.com', hence http://example.com/user/test
-          expect(last_response['Location']).to eq 'http://example.org/user/test'
+            allow(config).to receive_message_chain('signup').and_return(nil)
+
+            post '/login', username: 'test', password: 'password'
+            expect(last_response.status).to eq(302)
+            # Expect to be redirected to the users profile. The mocked config
+            # sets the URL to 'example.com', hence http://example.com/user/test
+            expect(last_response['Location']).to eq 'http://example.org/user/test'
+          end
+        end
+
+        context 'and signups are enable' do
+          it 'redirects the user to the intro page' do
+            allow(tilapia).to receive(:new).with(auth: Cyclid::Client::AUTH_BASIC,
+                                                 log_level: Logger::DEBUG,
+                                                 server: 'example.com',
+                                                 port: 9999,
+                                                 username: 'test',
+                                                 password: 'password').and_return(client)
+
+            allow(client).to receive(:token_get).and_return('token')
+
+            allow(model).to receive(:get).and_return(user)
+
+            allow(user).to receive(:organizations).and_return([])
+
+            allow(config).to receive_message_chain('signup').and_return('example.com')
+
+            post '/login', username: 'test', password: 'password'
+            expect(last_response.status).to eq(302)
+            # Expect to be redirected to the intro page. The mocked config
+            # sets the URL to 'example.com', hence http://example.com/user/test/intro
+            expect(last_response['Location']).to eq 'http://example.org/user/test/intro'
+          end
         end
       end
     end

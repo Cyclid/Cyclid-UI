@@ -76,7 +76,11 @@ module Cyclid
           initial_page = if request_uri
                            request_uri
                          elsif user.organizations.empty?
-                           "/user/#{username}"
+                           if Cyclid.config.signup
+                             "/user/#{username}/intro"
+                           else
+                             "/user/#{username}"
+                           end
                          else
                            user.organizations.first
                          end
