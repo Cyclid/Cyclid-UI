@@ -36,6 +36,22 @@ module Cyclid
 
           mustache :user
         end
+
+        get '/user/:username/intro' do
+          authenticate!
+
+          # Build breadcrumbs
+          username = params[:username]
+
+          @crumbs = []
+          @crumbs << { 'name' => 'User' }
+          @crumbs << { 'url' => "/user/#{username}", 'name' => username }
+          @crumbs << { 'url' => "/user/#{username}/intro", 'name' => 'Introduction' }
+
+          @current_user = current_user
+
+          mustache :intro
+        end
       end
     end
   end
