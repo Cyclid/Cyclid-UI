@@ -1,0 +1,32 @@
+FROM ubuntu:trusty
+
+# Cyclid server URLs for both Cyclid UI & Clients
+ARG server_url=http://cyclid-server:8361
+ENV SERVER_URL=${server_url}
+ARG client_url=http://localhost:8361
+ENV CLIENT_URL=${client_url}
+ARG session_secret=7b48be7df0efeb669cb899704b3153814980c9a846fd3b1398bcd6cb20e6e5ed
+ARG SESSION_SECRET=${session_secret}
+
+# Cyclid-UI runs on port 80
+EXPOSE 80
+
+# Install dependencies
+RUN apt-get update
+RUN apt-get install -qy software-properties-common
+RUN add-apt-repository ppa:brightbox/ruby-ng
+RUN apt-get update
+RUN apt-get install -qy ruby2.3 ruby2.3-dev build-essential cmake mysql-client libmysqlclient-dev libsasl2-dev
+RUN mkdir -p /var/run/cyclid /etc/cyclid /var/log/cyclid /var/lib/cyclid-ui
+
+# Install Cyclid-UI & Unicorn
+RUN gem install cyclid-ui
+RUN gem install unicorn
+RUN ln -s $(cyclid-ui-assets) /var/lib/cyclid-ui/public
+
+COPY files/config /etc/cyclid/config
+COPY files/ui/config.ru /var/lib/cyclid-ui/config.ru
+COPY files/ui/unicorn.rb /var/lib/cyclid-ui/unicorn.rb
+COPY files/ui/entrypoint.sh /entrypoint.sh
+
+ENTRYPOINT /entrypoint.sh

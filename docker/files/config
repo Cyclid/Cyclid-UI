@@ -1,0 +1,5 @@
+manage:
+  log: /var/log/cyclid/cyclid-ui.log
+  api:
+    server: SERVER_URL
+    client: CLIENT_URL
