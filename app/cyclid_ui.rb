@@ -61,7 +61,8 @@ module Cyclid
       use Rack::Csrf,
           raise: true,
           skip: ['POST:/login',
-                 'POST:/unauthenticated']
+                 'POST:/unauthenticated',
+                 'POST:/user/.*/invalidate']
 
       helpers Helpers
 

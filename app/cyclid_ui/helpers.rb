@@ -13,6 +13,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'oj'
+
 module Cyclid
   module UI
     # Various helper methods for Sinatra controllers
@@ -31,6 +33,31 @@ module Cyclid
       def halt_with_401
         flash[:login_error] = 'Invalid username or password'
         halt 401, flash.now[:login_error]
+      end
+
+      # Safely parse & validate the request body
+      def parse_request_body
+        # Parse the the request
+        begin
+          request.body.rewind
+
+          if request.content_type == 'application/json' or \
+             request.content_type == 'text/json'
+
+            data = Oj.load request.body.read
+          else
+            halt(415, "unsupported content type #{request.content_type}")
+          end
+        rescue Oj::ParseError, YAML::Exception => ex
+          Cyclid.logger.debug ex.message
+          halt(400, ex.message)
+        end
+
+        # Sanity check the request
+        halt(400, 'request body can not be empty') if data.nil?
+        halt(400, 'request body is invalid') unless data.is_a?(Hash)
+
+        return data
       end
     end
 

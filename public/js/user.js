@@ -10,7 +10,7 @@ function user_get_failed(xhr){
   // the worst (cyclid.token is invalid) and force re-authentication, too.
   if(xhr.status == 401 || xhr.status == 0){
     console.log(`Failed to retrieve job list: status was ${xhr.status}`);
-    window.location = '/login';
+    window.location = '/';
   } else {
     var failure_message = `Failed to retrieve user details<br>
                            <strong>${xhr.status}:</strong> ${xhr.responseText}`;

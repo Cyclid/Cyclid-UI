@@ -13,11 +13,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'sinatra/cross_origin'
+
 module Cyclid
   module UI
     module Controllers
       # Sinatra controller for user related endpoints
       class User < Base
+        register Sinatra::CrossOrigin
+
         get '/user/:username' do
           authenticate!
 
@@ -35,6 +39,20 @@ module Cyclid
           @organization = current_user.organizations.first
 
           mustache :user
+        end
+
+        post '/user/:username/invalidate' do
+          cross_origin
+
+          username = params[:username]
+
+          payload = parse_request_body
+          token = payload['token']
+
+          # Ensure the User is removed from Memcached
+          Models::User.invalidate(username: username, token: token)
+
+          200
         end
 
         get '/user/:username/intro' do
