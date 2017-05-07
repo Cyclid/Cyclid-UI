@@ -90,6 +90,20 @@ module Cyclid
 
           user_data
         end
+
+        def self.invalidate(args)
+          username = args[:username] || args['username']
+          memcache = Memcache.new(server: Cyclid.config.memcached)
+          begin
+            user_fetch(args)
+            memcache.expire(username)
+          rescue Memcached::ServerIsMarkedDead => ex
+            Cyclid.logger.fatal "cannot connect to memcached: #{ex}"
+            # If Memcache is down there is nothing to expire
+          rescue StandardError => ex
+            Cyclid.logger.debug "user invalidate failed: #{ex}"
+          end
+        end
       end
     end
   end
