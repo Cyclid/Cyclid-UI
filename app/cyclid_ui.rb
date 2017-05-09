@@ -55,9 +55,10 @@ module Cyclid
     # Sinatra application
     class App < Sinatra::Application
       use Rack::Deflater
-      use Rack::Session::Pool,
+      use Rack::Session::Cookie,
           expire_after: 31_557_600,
-          secret: ENV['COOKIE_SECRET'] || '8f54749dcb0ae0843cdd9669b797d311'
+          secret: ENV['COOKIE_SECRET'] || '8f54749dcb0ae0843cdd9669b797d311',
+          domain: Cyclid.config.domain
       use Rack::Csrf,
           raise: true,
           skip: ['POST:/login',
@@ -65,6 +66,12 @@ module Cyclid
                  'POST:/user/.*/invalidate']
 
       helpers Helpers
+
+      if production?
+        error do
+          redirect to '/'
+        end
+      end
 
       register Sinatra::Flash
 
@@ -146,6 +153,11 @@ module Cyclid
       use Controllers::User
       use Controllers::Health
       use Controllers::Default
+
+      # Catch-all route
+      get '*' do
+        redirect to '/'
+      end
     end
   end
 end

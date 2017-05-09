@@ -65,6 +65,7 @@ module Cyclid
           response.set_cookie('cyclid.token',
                               value: token_data['token'],
                               expires: Time.now + 21_600_000, # +6 hours
+                              domain: Cyclid.config.domain,
                               path: '/',
                               http_only: false) # Must be available for AJAX
 

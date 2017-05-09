@@ -42,6 +42,7 @@ describe Cyclid::UI::Controllers::Auth do
       allow(config).to receive_message_chain('server_api.host').and_return('example.com')
       allow(config).to receive_message_chain('server_api.port').and_return(9999)
       allow(config).to receive_message_chain('memcached').and_return('example.com:4242')
+      allow(config).to receive_message_chain('domain').and_return(nil)
       allow(Cyclid).to receive(:config).and_return(config)
     end
 

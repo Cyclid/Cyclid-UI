@@ -20,7 +20,7 @@ module Cyclid
   module UI
     # Cyclid UI configuration
     class Config
-      attr_reader :memcached, :log, :server_api, :client_api, :signup
+      attr_reader :memcached, :log, :server_api, :client_api, :signup, :domain
 
       def initialize(path)
         # Try to load the configuration file. If it can't be loaded, we'll
@@ -58,6 +58,9 @@ module Cyclid
 
         # URL of the signup link, if one is defined
         @signup = manage['signup'] || nil
+
+        # Our domain; used when setting cookies
+        @domain = manage['domain'] || nil
       rescue StandardError => ex
         abort "Failed to load configuration file #{path}: #{ex}"
       end
