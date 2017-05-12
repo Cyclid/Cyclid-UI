@@ -41,7 +41,7 @@ function user_update_details(user){
       config_org.click(function(e) {
         var org = $(this).data('org');
 
-        var config = `server: ${gblAPIURL}\n` +
+        var config = `url: ${gblAPIURL}\n` +
                      `organization: ${org}\n` +
                      `username: ${user.username}\n` +
                      `secret: ${user.secret}\n`;
